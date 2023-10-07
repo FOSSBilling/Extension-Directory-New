@@ -5,7 +5,7 @@
     <ul>
         {% for extension in extensions %}
         <li>
-            <a href="{{ url_for('extension', { 'id': extension.id }) }}">{{ extension.displayName }}</a>
+            <p><a href="{{ url_for('extension', { 'id': extension.id }) }}">{{ extension.displayName }}</a></p>
         </li>
       {% endfor %}
     </ul>

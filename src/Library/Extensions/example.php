@@ -7,7 +7,9 @@ class example
     const displayName = 'Example';
     const type = 'mod';
     const description = 'An example module for developers to get started.';
-    const license = 'Apache-2.0';
+    const license = [
+        'id' => 'apache-2.0'
+    ];
     const readmeUrl = 'https://raw.githubusercontent.com/FOSSBilling/example-module/main/README.md';
     const source = [
         'type' => 'github',

@@ -35,11 +35,10 @@ class ExtensionInfo
         $cache = new FilesystemAdapter('extInfo', 3600, PATH_CACHE);
         return $cache->get($id, function (ItemInterface $item) use ($FQCN, $id): array {
             $extension = new $FQCN;
-            if ($extension::readmeUrl) {
-                // Fetch the README
-                $readme = file_get_contents($extension::readmeUrl);
 
-                // Parse the README to HTML
+            // Fetch the extension's readme and convert it to HTML
+            if ($extension::readmeUrl) {
+                $readme = file_get_contents($extension::readmeUrl);
                 $converter = new GithubFlavoredMarkdownConverter([
                     'extensions' => [
                         new EmojiExtension(),
@@ -51,16 +50,24 @@ class ExtensionInfo
                 $readmeHtml = '<h1>Extension readme</h1> <br/> <p>This extension does not have a readme.</p>';
             }
 
+            // Sort the versions
+            $releases = $extension::releases;
+            usort($releases, function ($a, $b) {
+                return version_compare($b['tag'], $a['tag']);
+            });
+
+            $license = LicenseHelper::completeLicenseInfo($extension::license);
+
             return [
                 'displayName' => $extension::displayName,
                 'type'        => $extension::type,
                 'description' => $extension::description,
-                'license'     => $extension::license,
+                'license'     => $license,
                 'readme'      => $readmeHtml,
                 'source'      => $extension::source,
                 'website'     => $extension::website,
                 'icon_url'    => $extension::icon_url,
-                'releases'    => $extension::releases,
+                'releases'    => $releases,
                 'id'          => strtolower($id),
             ];
         });

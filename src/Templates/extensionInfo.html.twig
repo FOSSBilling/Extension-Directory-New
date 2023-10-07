@@ -3,6 +3,7 @@
 {% block title %}<title>{{ extension.displayName }} | FOSSBilling extensions</title>{% endblock %}
 
 {% block content %}
+  <a href="{{ url_for('index') }}">Back to the main list</a>
   <h1>{{ extension.displayName }} Extension</h1>
   <div class="extension-info">
     <div class="row">
@@ -10,7 +11,7 @@
         <h2>Description</h2>
         <p>{{ extension.description }}</p>
         <h2>License</h2>
-        <p>{{ extension.license }}</p>
+        <p><a href="{{ extension.license.link }}" target="_blank">{{ extension.license.name }}</a></p>
         <h2>Readme</h2>
         <p>{{ extension.readme|raw }}</p>
         <h2>Source</h2>

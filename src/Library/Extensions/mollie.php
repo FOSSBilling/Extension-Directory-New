@@ -7,7 +7,9 @@ class mollie
     const displayName = 'Mollie';
     const type = 'payment-gateway';
     const description = 'Mollie extension for FOSSBilling';
-    const license = 'Apache-2.0';
+    const license = [
+        'id' => 'apache-2.0'
+    ];
     const readmeUrl = 'https://raw.githubusercontent.com/FOSSBilling/Mollie/main/README.md';
     const source = [
         'type' => 'github',
