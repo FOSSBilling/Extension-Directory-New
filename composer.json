@@ -1,0 +1,27 @@
+{
+    "name": "fossbilling/extension-directory",
+    "description": "The FOSSBilling extension directory, rewritten to use PHP and to not be a static stite",
+    "type": "project",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Belle Aerni",
+            "email": "belleaerni@gmail.com"
+        }
+    ],
+    "require": {
+        "antcms/antloader": "^2.0",
+        "elgigi/commonmark-emoji": "^2.0",
+        "league/commonmark": "^2.4",
+        "php-di/slim-bridge": "^3.4",
+        "rakibtg/sleekdb": "^2.15",
+        "slim/psr7": "^1.6",
+        "slim/slim": "^4",
+        "slim/twig-view": "^3.3",
+        "symfony/cache": "^6.0"
+    },
+    "config": {
+        "vendor-dir": "src/Vendor",
+        "sort-packages": true
+    }
+}

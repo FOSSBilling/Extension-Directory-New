@@ -1,0 +1,45 @@
+{% extends "base.html.twig" %}
+
+{% block title %}<title>{{ extension.displayName }} | FOSSBilling extensions</title>{% endblock %}
+
+{% block content %}
+  <h1>{{ extension.displayName }} Extension</h1>
+  <div class="extension-info">
+    <div class="row">
+      <div class="col-md-9">
+        <h2>Description</h2>
+        <p>{{ extension.description }}</p>
+        <h2>License</h2>
+        <p>{{ extension.license }}</p>
+        <h2>Readme</h2>
+        <p>{{ extension.readme|raw }}</p>
+        <h2>Source</h2>
+        <p>Type: {{ extension.source.type }}</p>
+        <p>Repository: {{ extension.source.repo }}</p>
+        <h2>Website</h2>
+        <p><a href="{{ extension.website }}" target="_blank">{{ extension.website }}</a></p>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-header">
+            <h2>Releases</h2>
+          </div>
+          <div class="card-body">
+            <ul>
+              {% for release in extension.releases %}
+                <li>
+                  <strong>Version: {{ release.tag }}</strong><br>
+                  Date: {{ release.date }}<br>
+                  Minimum FOSSBilling Version: {{ release.min_fossbilling_version }}<br>
+                  <a href="{{ release.download_url }}" target="_blank">Download</a><br>
+                  <a href="{{ release.changelog_url }}" target="_blank">Changelog</a>
+                </li>
+                <hr>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

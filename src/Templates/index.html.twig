@@ -1,0 +1,12 @@
+{% extends "base.html.twig" %}
+
+{% block content %}
+    <h1>Extensions</h1>
+    <ul>
+        {% for extension in extensions %}
+        <li>
+            <a href="{{ url_for('extension', { 'id': extension.id }) }}">{{ extension.displayName }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+{% endblock %}
