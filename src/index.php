@@ -50,4 +50,39 @@ $app->get('/extension/{id}', function (Request $request, Response $response, $ar
     }
 })->setName('extension');
 
+$app->get('/api/extension/{id}', function (Request $request, Response $response, $args) {
+    $extensionInfo = ExtensionDirectory\ExtensionInfo::getExtensionInfo($args['id'], false);
+    if (!$extensionInfo) {
+        // TODO: Handle errors here
+    } else {
+        $response->getBody()->write(json_encode(['result' => $extensionInfo]));
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(201);
+    }
+});
+
+$app->any('/api/list', function (Request $request, Response $response, $args) {
+    $extensionInfo = ExtensionDirectory\ExtensionInfo::getAllExtensions(false);
+    $GET = $request->getQueryParams();
+    $POST = $request->getParsedBody();
+    $filterType = $GET['type'] ?? $POST['type'] ?? null;
+
+    // Filter the type if needed
+    if (!empty($filterType)) {
+        $extensionInfo = array_filter($extensionInfo, function ($extension) use ($filterType) {
+            return $extension['type'] == $filterType;
+        }, ARRAY_FILTER_USE_BOTH);
+    }
+
+    if (!$extensionInfo) {
+        // TODO: Handle errors here
+    } else {
+        $response->getBody()->write(json_encode(['result' => $extensionInfo]));
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(201);
+    }
+});
+
 $app->run();

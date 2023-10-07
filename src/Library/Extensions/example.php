@@ -4,7 +4,7 @@ namespace ExtensionDirectory\Extensions;
 
 class example
 {
-    const displayName = 'Example';
+    const name = 'Example';
     const type = 'mod';
     const description = 'An example module for developers to get started.';
     const license = [

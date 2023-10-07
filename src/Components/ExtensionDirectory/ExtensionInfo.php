@@ -9,13 +9,13 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class ExtensionInfo
 {
-    public static function getAllExtensions(): array
+    public static function getAllExtensions(bool $convertReadme = true): array
     {
         $extensionList = Tools::getFileList(BASE_PATH . DIRECTORY_SEPARATOR . 'Library' . DIRECTORY_SEPARATOR . 'Extensions', 'php');
         $extensions = [];
         foreach ($extensionList as $extension) {
             $extension = basename($extension, ".php");
-            $info = self::getExtensionInfo($extension);
+            $info = self::getExtensionInfo($extension, $convertReadme);
             if ($info) {
                 $extensions[] = $info;
             }
@@ -24,7 +24,7 @@ class ExtensionInfo
         return $extensions;
     }
 
-    public static function getExtensionInfo(string $id): array
+    public static function getExtensionInfo(string $id, bool $convertReadme = true): array
     {
         $id = strtolower($id);
         $FQCN = '\\ExtensionDirectory\\Extensions\\' . $id;
@@ -33,21 +33,26 @@ class ExtensionInfo
         }
 
         $cache = new FilesystemAdapter('extInfo', 3600, PATH_CACHE);
-        return $cache->get($id, function (ItemInterface $item) use ($FQCN, $id): array {
+        $key = $convertReadme ? $id . '.converted' : $id . 'notConverted';
+        return $cache->get($key, function (ItemInterface $item) use ($FQCN, $id, $convertReadme): array {
             $extension = new $FQCN;
 
-            // Fetch the extension's readme and convert it to HTML
+            // Fetch the extension's readme
             if ($extension::readmeUrl) {
                 $readme = file_get_contents($extension::readmeUrl);
-                $converter = new GithubFlavoredMarkdownConverter([
-                    'extensions' => [
-                        new EmojiExtension(),
-                    ],
-                ]);
 
-                $readmeHtml = $converter->convert($readme);
+                // If desired, convert it to HTML
+                if ($convertReadme) {
+                    $converter = new GithubFlavoredMarkdownConverter([
+                        'extensions' => [
+                            new EmojiExtension(),
+                        ],
+                    ]);
+
+                    $readme = $converter->convert($readme);
+                }
             } else {
-                $readmeHtml = '<h1>Extension readme</h1> <br/> <p>This extension does not have a readme.</p>';
+                $readme = '<h1>Extension readme</h1> <br/> <p>This extension does not have a readme.</p>';
             }
 
             // Sort the versions
@@ -56,21 +61,25 @@ class ExtensionInfo
                 return version_compare($b['tag'], $a['tag']);
             });
 
+            $downloadURL = 
+
             // Pull in SPDX info if needed to complete the license info
             $license = Tools::completeLicenseInfo($extension::license);
 
             return [
-                'displayName' => $extension::displayName,
-                'type'        => $extension::type,
-                'description' => $extension::description,
-                'license'     => $license,
-                'readme'      => $readmeHtml,
-                'source'      => Tools::getRepoInfo($extension::source),
-                'website'     => $extension::website,
-                'icon_url'    => $extension::icon_url,
-                'releases'    => $releases,
                 'id'          => $id,
-                'author'      => Tools::returnAuthorInfo($extension::author),
+                'type'        => $extension::type,
+                'name'         => $extension::name,
+                'description'  => $extension::description,
+                'version'      => $releases[0]['tag'],
+                'download_url' => $releases[0]['download_url'],
+                'releases'     => $releases,
+                'author'       => Tools::returnAuthorInfo($extension::author),
+                'license'      => $license,
+                'source'       => Tools::getRepoInfo($extension::source),
+                'icon_url'     => $extension::icon_url,
+                'website'      => $extension::website,
+                'readme'       => $readme,
             ];
         });
     }

@@ -4,7 +4,7 @@ namespace ExtensionDirectory\Extensions;
 
 class mollie
 {
-    const displayName = 'Mollie';
+    const name = 'Mollie';
     const type = 'payment-gateway';
     const description = 'Mollie extension for FOSSBilling';
     const license = [

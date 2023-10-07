@@ -36,7 +36,7 @@ class Tools
         return $cache->get($key, function (ItemInterface $item) use ($license): array {
             $item->expiresAfter(86400 * 7); // Cache this result for a full week as it should very rarely change.
 
-            if (!empty($license['id']) && (empty($license['link']) || empty($license['name']))) {
+            if (!empty($license['id']) && (empty($license['URL']) || empty($license['name']))) {
                 try {
                     $licenses = new \Composer\Spdx\SpdxLicenses();
                     $fetchedLicense = $licenses->getLicenseByIdentifier($license['id']);
@@ -45,7 +45,7 @@ class Tools
                 }
 
                 if (isset($fetchedLicense[2]) && str_contains($fetchedLicense[2], 'https://')) {
-                    $license['link'] ??= $fetchedLicense[2];
+                    $license['URL'] ??= $fetchedLicense[2];
                 }
 
                 if (isset($fetchedLicense[0])) {
@@ -59,16 +59,16 @@ class Tools
 
     public static function getRepoInfo(array $source): array
     {
-        if (empty($source['link'])) {
+        if (empty($source['URL'])) {
             switch ($source['type']) {
                 case 'github':
-                    $source['link'] = 'https://github.com/' . $source['repo'];
+                    $source['URL'] = 'https://github.com/' . $source['repo'];
                 case 'bitbucket':
-                    $source['link'] = 'https://bitbucket.org/' . $source['repo'];
+                    $source['URL'] = 'https://bitbucket.org/' . $source['repo'];
                 case 'gitlab':
-                    $source['link'] = 'https://gitlab.com/' . $source['repo'];
+                    $source['URL'] = 'https://gitlab.com/' . $source['repo'];
                 default:
-                    $source['link'] = '';
+                    $source['URL'] = '';
             }
         }
         return $source;
@@ -86,7 +86,7 @@ class Tools
             'type' => $authorClass::type,
             'name' => $authorClass::name,
             'id' => $authorClass::id,
-            'link' => $authorClass::link,
+            'URL' => $authorClass::URL,
         ];
     }
 }
