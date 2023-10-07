@@ -18,6 +18,8 @@ class mollie
     const website = 'https://fossbilling.org';
     const icon_url = 'https://raw.githubusercontent.com/FOSSBilling/Mollie/main/src/Mollie.png';
 
+    const author = 'FOSSBilling';
+
     const releases = [
         [
             "tag" => "0.0.3",
@@ -41,9 +43,4 @@ class mollie
             "min_fossbilling_version" => "0.1",
         ],
     ];
-
-    public static function getAuthor()
-    {
-        return new \ExtensionDirectory\Authors\FOSSBilling;
-    }
 }

@@ -1,29 +1,49 @@
 {% extends "base.html.twig" %}
 
-{% block title %}<title>{{ extension.displayName }} | FOSSBilling extensions</title>{% endblock %}
+{% block title %}
+  <title>{{ extension.displayName }} | FOSSBilling extensions</title>
+{% endblock %}
 
 {% block content %}
   <a href="{{ url_for('index') }}">Back to the main list</a>
   <h1>{{ extension.displayName }} Extension</h1>
+  <p>{{ extension.description }}</p>
+
   <div class="extension-info">
     <div class="row">
       <div class="col-md-9">
-        <h2>Description</h2>
-        <p>{{ extension.description }}</p>
-        <h2>License</h2>
-        <p><a href="{{ extension.license.link }}" target="_blank">{{ extension.license.name }}</a></p>
         <h2>Readme</h2>
         <p>{{ extension.readme|raw }}</p>
-        <h2>Source</h2>
-        <p>Type: {{ extension.source.type }}</p>
-        <p>Repository: {{ extension.source.repo }}</p>
-        <h2>Website</h2>
-        <p><a href="{{ extension.website }}" target="_blank">{{ extension.website }}</a></p>
       </div>
       <div class="col-md-3">
+        <!-- Extension info -->
         <div class="card">
           <div class="card-header">
-            <h2>Releases</h2>
+            <h4>Extension information</h4>
+          </div>
+          <div class="card-body">
+            <dl>
+              <dt>Website</dt>
+              <dd><a href="{{ extension.website }}" target="_blank">{{ extension.website }}</a></dd>
+
+              <dt>Publisher</dt>
+              <dd><a href="{{ extension.author.url }}" target="_blank">{{ extension.author.name }}</a></dd>
+
+              <dt>License</dt>
+              <dd><a href="{{ extension.license.link }}" target="_blank">{{ extension.license.name }}</a></dd>
+
+              <dt>Source code</dt>
+              <dd><a href="{{ extension.source.link }}" target="_blank">{{ extension.source.type }}</a></dd>
+
+              <dt>Minimum FOSSBilling version</dt>
+              <dd>{{ extension.releases[0].min_fossbilling_version }}</dd>
+            </dl> 
+          </div>
+        </div>
+        <!-- Extension releases -->
+        <div class="card mt-2">
+          <div class="card-header">
+            <h4>Extension releases</h4>
           </div>
           <div class="card-body">
             <ul>

@@ -56,7 +56,8 @@ class ExtensionInfo
                 return version_compare($b['tag'], $a['tag']);
             });
 
-            $license = LicenseHelper::completeLicenseInfo($extension::license);
+            // Pull in SPDX info if needed to complete the license info
+            $license = Tools::completeLicenseInfo($extension::license);
 
             return [
                 'displayName' => $extension::displayName,
@@ -64,11 +65,12 @@ class ExtensionInfo
                 'description' => $extension::description,
                 'license'     => $license,
                 'readme'      => $readmeHtml,
-                'source'      => $extension::source,
+                'source'      => Tools::getRepoInfo($extension::source),
                 'website'     => $extension::website,
                 'icon_url'    => $extension::icon_url,
                 'releases'    => $releases,
-                'id'          => strtolower($id),
+                'id'          => $id,
+                'author'      => Tools::returnAuthorInfo($extension::author),
             ];
         });
     }
