@@ -9,9 +9,8 @@
   <h1>{{ extension.name }} Extension</h1>
   <p>{{ extension.description }}</p>
 
-  <div class="extension-info">
-    <div class="row">
-      <div class="col-md-9">
+ <div class="row">
+      <div class="col-md-9 overflow-scroll">
         <h2>Readme</h2>
         {{ extension.readme|raw }}
       </div>
@@ -62,5 +61,4 @@
         </div>
       </div>
     </div>
-  </div>
 {% endblock %}

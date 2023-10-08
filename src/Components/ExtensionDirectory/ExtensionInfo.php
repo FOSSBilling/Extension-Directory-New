@@ -2,6 +2,10 @@
 
 namespace ExtensionDirectory;
 
+use League\CommonMark\Extension\CommonMark\Node\Inline\Image;
+use League\CommonMark\Extension\DefaultAttributes\DefaultAttributesExtension;
+use League\CommonMark\Extension\Table\Table;
+use League\CommonMark\Extension\CommonMark\Node\Block\BlockQuote;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 use ElGigi\CommonMarkEmoji\EmojiExtension;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -56,7 +60,22 @@ class ExtensionInfo
                 $converter = new GithubFlavoredMarkdownConverter([
                     'extensions' => [
                         new EmojiExtension(),
+                        new DefaultAttributesExtension(),
                     ],
+                    'default_attributes' => [
+                        Table::class => [
+                            'class' => 'table table-hover',
+                        ],
+                        Image::class => [
+                            'class' => 'img-fluid',
+                        ],
+                        BlockQuote::class => [
+                            'class' => 'blockquote',
+                        ],
+                    ],
+                    'html_input' => 'strip',
+                    'max_nesting_level' => 25,
+                    'allow_unsafe_links' => false,
                 ]);
 
                 return $converter->convert($readme);
