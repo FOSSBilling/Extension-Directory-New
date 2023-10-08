@@ -1,12 +1,20 @@
 {% extends "base.html.twig" %}
 
 {% block content %}
-    <h1>Extensions</h1>
-    <ul>
-        {% for extension in extensions %}
-        <li>
-            <p><a href="{{ url_for('extension', { 'id': extension.id }) }}">{{ extension.name }}</a></p>
-        </li>
-        {% endfor %}
-    </ul>
+  <h1>Extensions</h1>
+  <div class="grid">
+    {% for extension in extensions %}
+      <div class="grid-item">
+        <div class="card" style="width: 18rem;">
+          <a href="{{ url_for('extension', { 'id': extension.id }) }}">
+            <img class="card-img-top" src="{{ extension.icon_url }}" alt="Extension icon">
+            <div class="card-body">
+              <h5 class="card-title">{{ extension.name }}</h5>
+              <p class="card-text">{{ extension.description }}</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 {% endblock %}

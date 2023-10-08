@@ -19,7 +19,7 @@ class razorpay
     const website = 'https://razorpay.com';
     const icon_url = 'https://raw.githubusercontent.com/albinvar/assets/main/fossbilling/razorpay-glyph-cropped.svg';
 
-    const author = 'albinvar';
+    const author = 'Albinvar';
 
     const releases = [
         [

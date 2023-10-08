@@ -2,7 +2,7 @@
 
 namespace ExtensionDirectory\Authors;
 
-class Bitcart
+class Albinvar
 {
     const type = 'individual';
     const name = 'Albinvar';

@@ -2,7 +2,7 @@
 
 namespace ExtensionDirectory\Authors;
 
-class Bitcart
+class UddoktaPay
 {
     const type = 'organization';
     const name = 'UddoktaPay';
