@@ -17,7 +17,7 @@ class ResponseHelper
     public static function renderJson(bool $error = false, string|array $result, Response $response, ?int $code = null)
     {
         if ($error) {
-            $response->getBody()->write(json_encode(['error' => $result]));
+            $response->getBody()->write(json_encode(['error' => ['message' => $result]]));
             $code ??= (date('m-d') == '04-01') ? 418 : 500;
         } else {
             $response->getBody()->write(json_encode(['result' => $result]));

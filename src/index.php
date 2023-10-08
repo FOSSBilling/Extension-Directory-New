@@ -8,6 +8,7 @@ use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use ExtensionDirectory\ResponseHelper;
+use ExtensionDirectory\BadgeBuilder;
 
 define('BASE_PATH', __DIR__);
 define('PATH_CACHE', __DIR__ . DIRECTORY_SEPARATOR . 'Cache');
@@ -80,6 +81,12 @@ $app->any('/api/list', function (Request $request, Response $response, $args) {
     } else {
         return ResponseHelper::renderJson(false, $extensionList, $response);
     }
+});
+
+$app->get('/api/extension/{id}/badges/{type}', function (Request $request, Response $response, $args) {
+    $badge = BadgeBuilder::buildABadge($args['id'], $args['type'], $this->get('cache'));
+    $response->getBody()->write($badge);
+    return $response;
 });
 
 $app->run();
