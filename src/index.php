@@ -1,10 +1,13 @@
 <?php
 
+use DI\Container;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use ExtensionDirectory\ResponseHelper;
 
 define('BASE_PATH', __DIR__);
 define('PATH_CACHE', __DIR__ . DIRECTORY_SEPARATOR . 'Cache');
@@ -12,76 +15,70 @@ define('PATH_CACHE', __DIR__ . DIRECTORY_SEPARATOR . 'Cache');
 require_once BASE_PATH . DIRECTORY_SEPARATOR . 'Vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 // Setup the auto-loader
-$loader = new AntCMS\AntLoader();
+$loader = new AntCMS\AntLoader(['path' => PATH_CACHE . DIRECTORY_SEPARATOR . 'Classmap.php', 'mode' => 'filesystem']);
 $loader->addNamespace('', BASE_PATH . DIRECTORY_SEPARATOR . 'Components');
 $loader->addNamespace('', BASE_PATH . DIRECTORY_SEPARATOR . 'Library');
 $loader->checkClassMap();
 $loader->register(true);
 
+// Setup Dependency Injection
+$container = new Container();
+$container->set('cache', function () {
+    return new FilesystemAdapter('fs_cache', 3600, PATH_CACHE);
+});
+
 // Now create the app
-//$app = \DI\Bridge\Slim\Bridge::create();
+AppFactory::setContainer($container);
 $app = AppFactory::create();
 $twig = Twig::create(BASE_PATH . DIRECTORY_SEPARATOR . 'Templates', ['cache' => PATH_CACHE, 'debug' => true]);
 $twig->addExtension(new \Twig\Extension\DebugExtension());
 $app->add(TwigMiddleware::create($app, $twig));
 
 $app->get('/', function (Request $request, Response $response, $args) {
-    $extensions = ExtensionDirectory\ExtensionInfo::getAllExtensions();
-    if (!$extensions) {
+    $extensionList = ExtensionDirectory\ExtensionInfo::getAllExtensions(true, $this->get('cache'));
+    if (!$extensionList) {
         // TODO: Handle errors here
     } else {
-        $view = Twig::fromRequest($request);
-        return $view->render($response, 'index.html.twig', [
-            'extensions' => $extensions
-        ]);
+        return ResponseHelper::renderTwigTemplate($response, $request, 'index.html.twig', ['extensions' => $extensionList]);
     }
 })->setName('index');
 
 
 $app->get('/extension/{id}', function (Request $request, Response $response, $args) {
-    $extensionInfo = ExtensionDirectory\ExtensionInfo::getExtensionInfo($args['id']);
+    $extensionInfo = ExtensionDirectory\ExtensionInfo::getExtensionInfo($args['id'], true, $this->get('cache'));
     if (!$extensionInfo) {
         // TODO: Handle errors here
     } else {
-        $view = Twig::fromRequest($request);
-        return $view->render($response, 'extensionInfo.html.twig', [
-            'extension' => $extensionInfo
-        ]);
+        return ResponseHelper::renderTwigTemplate($response, $request, 'extensionInfo.html.twig', ['extension' => $extensionInfo]);
     }
 })->setName('extension');
 
 $app->get('/api/extension/{id}', function (Request $request, Response $response, $args) {
-    $extensionInfo = ExtensionDirectory\ExtensionInfo::getExtensionInfo($args['id'], false);
+    $extensionInfo = ExtensionDirectory\ExtensionInfo::getExtensionInfo($args['id'], false, $this->get('cache'));
     if (!$extensionInfo) {
         // TODO: Handle errors here
     } else {
-        $response->getBody()->write(json_encode(['result' => $extensionInfo]));
-        return $response
-            ->withHeader('Content-Type', 'application/json')
-            ->withStatus(201);
+        return ResponseHelper::renderJson(false, $extensionInfo, $response);
     }
 });
 
 $app->any('/api/list', function (Request $request, Response $response, $args) {
-    $extensionInfo = ExtensionDirectory\ExtensionInfo::getAllExtensions(false);
+    $extensionList = ExtensionDirectory\ExtensionInfo::getAllExtensions(false, $this->get('cache'));
     $GET = $request->getQueryParams();
     $POST = $request->getParsedBody();
     $filterType = $GET['type'] ?? $POST['type'] ?? null;
 
     // Filter the type if needed
     if (!empty($filterType)) {
-        $extensionInfo = array_filter($extensionInfo, function ($extension) use ($filterType) {
+        $extensionList = array_filter($extensionList, function ($extension) use ($filterType) {
             return $extension['type'] == $filterType;
         }, ARRAY_FILTER_USE_BOTH);
     }
 
-    if (!$extensionInfo) {
+    if (!$extensionList) {
         // TODO: Handle errors here
     } else {
-        $response->getBody()->write(json_encode(['result' => $extensionInfo]));
-        return $response
-            ->withHeader('Content-Type', 'application/json')
-            ->withStatus(201);
+        return ResponseHelper::renderJson(false, $extensionList, $response);
     }
 });
 

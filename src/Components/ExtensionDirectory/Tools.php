@@ -2,7 +2,6 @@
 
 namespace ExtensionDirectory;
 
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class Tools
@@ -28,12 +27,10 @@ class Tools
      * Returns the completed license info depending on what items are missing.
      * As long as the SPDX ID is passed, this function will fetch the name of the license as well as a link to it.
      */
-    public static function completeLicenseInfo(array $license): array
+    public static function completeLicenseInfo(array $license, object $cacheService): array
     {
-        $cache = new FilesystemAdapter('licenseInfo', 3600, PATH_CACHE);
         $key = serialize($license);
-
-        return $cache->get($key, function (ItemInterface $item) use ($license): array {
+        return $cacheService->get($key, function (ItemInterface $item) use ($license): array {
             $item->expiresAfter(86400 * 7); // Cache this result for a full week as it should very rarely change.
 
             if (!empty($license['id']) && (empty($license['URL']) || empty($license['name']))) {

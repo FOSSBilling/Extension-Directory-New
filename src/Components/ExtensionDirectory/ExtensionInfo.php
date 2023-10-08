@@ -4,18 +4,17 @@ namespace ExtensionDirectory;
 
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 use ElGigi\CommonMarkEmoji\EmojiExtension;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class ExtensionInfo
 {
-    public static function getAllExtensions(bool $convertReadme = true): array
+    public static function getAllExtensions(bool $convertReadme = true, object $cacheService): array
     {
         $extensionList = Tools::getFileList(BASE_PATH . DIRECTORY_SEPARATOR . 'Library' . DIRECTORY_SEPARATOR . 'Extensions', 'php');
         $extensions = [];
         foreach ($extensionList as $extension) {
             $extension = basename($extension, ".php");
-            $info = self::getExtensionInfo($extension, $convertReadme);
+            $info = self::getExtensionInfo($extension, $convertReadme, $cacheService);
             if ($info) {
                 $extensions[] = $info;
             }
@@ -24,7 +23,7 @@ class ExtensionInfo
         return $extensions;
     }
 
-    public static function getExtensionInfo(string $id, bool $convertReadme = true): array
+    public static function getExtensionInfo(string $id, bool $convertReadme = true, object $cacheService): array
     {
         $id = strtolower($id);
         $FQCN = '\\ExtensionDirectory\\Extensions\\' . $id;
@@ -32,9 +31,10 @@ class ExtensionInfo
             return [];
         }
 
-        $cache = new FilesystemAdapter('extInfo', 3600, PATH_CACHE);
         $key = $convertReadme ? $id . '.converted' : $id . 'notConverted';
-        return $cache->get($key, function (ItemInterface $item) use ($FQCN, $id, $convertReadme): array {
+        return $cacheService->get($key, function (ItemInterface $item) use ($FQCN, $id, $convertReadme, $cacheService): array {
+            $item->expiresAfter(86400); // Retain this cache for one day
+
             $extension = new $FQCN;
 
             // Fetch the extension's readme
@@ -61,10 +61,8 @@ class ExtensionInfo
                 return version_compare($b['tag'], $a['tag']);
             });
 
-            $downloadURL = 
-
             // Pull in SPDX info if needed to complete the license info
-            $license = Tools::completeLicenseInfo($extension::license);
+            $license = Tools::completeLicenseInfo($extension::license, $cacheService);
 
             return [
                 'id'          => $id,
