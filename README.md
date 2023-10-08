@@ -8,7 +8,11 @@ All basic functionality from the original extension directory is now implemented
 1. Ensure you have the necessary composer packages installed by doing `composer install` from the root directory
 2. Move to the `src` directory by doing `cd src`
 3. Start the dev server by doing `php -S localhost:8000`
-4. Periodically clear the `src/Cache` directory as cache isn't automatically disabled during during development yet
+
+### Changing the enviroment variables
+
+1. Make a copy of the `.env` file and rename it to `.env.local`
+2. Open the `.env.local` and edit it to apply your chagnes. This fill will be ignored by the version control and can be used to overwrite the default options. 
 
 ## Adding a new extension or author
 

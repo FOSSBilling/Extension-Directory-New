@@ -18,7 +18,8 @@
         "slim/psr7": "^1.6",
         "slim/slim": "^4",
         "slim/twig-view": "^3.3",
-        "symfony/cache": "^6.0"
+        "symfony/cache": "^6.0",
+        "symfony/dotenv": "^6.0"
     },
     "config": {
         "vendor-dir": "src/Vendor",
