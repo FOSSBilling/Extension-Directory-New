@@ -30,6 +30,7 @@ class Tools
     public static function completeLicenseInfo(array $license, object $cacheService): array
     {
         $key = serialize($license);
+
         return $cacheService->get($key, function (ItemInterface $item) use ($license): array {
             $item->expiresAfter(86400 * 7); // Cache this result for a full week as it should very rarely change.
 

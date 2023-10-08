@@ -25,60 +25,70 @@ class ExtensionInfo
 
     public static function getExtensionInfo(string $id, bool $convertReadme = true, object $cacheService): array
     {
+        // Convert the ID to lowercase and build the fully qualified class name
         $id = strtolower($id);
         $FQCN = '\\ExtensionDirectory\\Extensions\\' . $id;
+
+        // If the class doesn't exist, return an empty array
         if (!class_exists($FQCN)) {
             return [];
         }
 
-        $key = $convertReadme ? $id . '.converted' : $id . 'notConverted';
-        return $cacheService->get($key, function (ItemInterface $item) use ($FQCN, $id, $convertReadme, $cacheService): array {
-            $item->expiresAfter(86400); // Retain this cache for one day
+        // Instantiate the extension class
+        $extension = new $FQCN;
 
-            $extension = new $FQCN;
+        // Determine the cache key based on whether or not the readme should be converted to HTML
+        $key = $convertReadme ? $id . 'converted' : $id . 'notConverted';
 
-            // Fetch the extension's readme
+        // Retrieve the readme from the cache, or generate it and cache it if it doesn't exist
+        $readme = $cacheService->get($key, function (ItemInterface $item) use ($extension, $convertReadme): string {
+            // Set the cache expiration time to one day
+            $item->expiresAfter(86400);
+
+            // Attempt to retrieve the readme from the URL specified in the extension class
+            $readme = 'There was an issue retrieving the module\'s readme.';
             if ($extension::readmeUrl) {
                 $readme = file_get_contents($extension::readmeUrl);
-
-                // If desired, convert it to HTML
-                if ($convertReadme) {
-                    $converter = new GithubFlavoredMarkdownConverter([
-                        'extensions' => [
-                            new EmojiExtension(),
-                        ],
-                    ]);
-
-                    $readme = $converter->convert($readme);
-                }
-            } else {
-                $readme = '<h1>Extension readme</h1> <br/> <p>This extension does not have a readme.</p>';
             }
 
-            // Sort the versions
-            $releases = $extension::releases;
-            usort($releases, function ($a, $b) {
-                return version_compare($b['tag'], $a['tag']);
-            });
+            // If desired, convert the readme to HTML
+            if ($convertReadme) {
+                $converter = new GithubFlavoredMarkdownConverter([
+                    'extensions' => [
+                        new EmojiExtension(),
+                    ],
+                ]);
 
-            // Pull in SPDX info if needed to complete the license info
-            $license = Tools::completeLicenseInfo($extension::license, $cacheService);
-
-            return [
-                'id'          => $id,
-                'type'        => $extension::type,
-                'name'         => $extension::name,
-                'description'  => $extension::description,
-                'version'      => $releases[0]['tag'],
-                'download_url' => $releases[0]['download_url'],
-                'releases'     => $releases,
-                'author'       => Tools::returnAuthorInfo($extension::author),
-                'license'      => $license,
-                'source'       => Tools::getRepoInfo($extension::source),
-                'icon_url'     => $extension::icon_url,
-                'website'      => $extension::website,
-                'readme'       => $readme,
-            ];
+                return $converter->convert($readme);
+            } else {
+                return $readme;
+            }
         });
+
+        // Sort the releases by version number in descending order
+        $releases = $extension::releases;
+        usort($releases, function ($a, $b) {
+            return version_compare($b['tag'], $a['tag']);
+        });
+
+        // Complete the license information using the SPDX API if necessary
+        $license = Tools::completeLicenseInfo($extension::license, $cacheService);
+
+        // Build and return an array of extension information
+        return [
+            'id'           => $id,
+            'type'         => $extension::type,
+            'name'         => $extension::name,
+            'description'  => $extension::description,
+            'version'      => $releases[0]['tag'],
+            'download_url' => $releases[0]['download_url'],
+            'releases'     => $releases,
+            'author'       => Tools::returnAuthorInfo($extension::author),
+            'license'      => $license,
+            'source'       => Tools::getRepoInfo($extension::source),
+            'icon_url'     => $extension::icon_url,
+            'website'      => $extension::website,
+            'readme'       => $readme,
+        ];
     }
 }
