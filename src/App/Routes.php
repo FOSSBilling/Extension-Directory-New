@@ -18,6 +18,10 @@ return function (App $app) {
         }
     })->setName('index');
 
+    $app->get('/about', function (Request $request, Response $response, $args) {
+            return ResponseHelper::renderTwigTemplate($response, $request, 'about.html.twig');
+    })->setName('about');
+
     $app->get('/extension/{id}', function (Request $request, Response $response, $args) {
         $extensionInfo = ExtensionDirectory\ExtensionInfo::getExtensionInfo($args['id'], true, $this->get('cache'));
         if (!$extensionInfo) {

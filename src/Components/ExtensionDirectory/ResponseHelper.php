@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 class ResponseHelper
 {
-    public static function renderTwigTemplate(Response $response, Request $request, $template, $data)
+    public static function renderTwigTemplate(Response $response, Request $request, string $template, array $data = [])
     {
         $view = Twig::fromRequest($request);
         return $view->render($response, $template, $data);

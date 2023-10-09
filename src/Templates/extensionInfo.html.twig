@@ -5,60 +5,61 @@
 {% endblock %}
 
 {% block content %}
-  <a href="{{ url_for('index') }}">Back to the main list</a>
-  <h1>{{ extension.name }} Extension</h1>
-  <p>{{ extension.description }}</p>
-
- <div class="row">
-      <div class="col-md-9 overflow-scroll">
-        <h2>Readme</h2>
+  <div class="row">
+    <div class="card col-md-9">
+      <div class="card-header">
+        <h1>{{ extension.name }}</h1>
+        <p class="text-muted">{{ extension.description }}</p>
+      </div>
+      <div class="card-body overflow-scroll">
         {{ extension.readme|raw }}
       </div>
-      <div class="col-md-3">
-        <!-- Extension info -->
-        <div class="card">
-          <div class="card-header">
-            <h4>Extension information</h4>
-          </div>
-          <div class="card-body">
-            <dl>
-              <dt>Website</dt>
-              <dd><a href="{{ extension.website }}" target="_blank">{{ extension.website }}</a></dd>
-
-              <dt>Publisher</dt>
-              <dd><a href="{{ extension.author.url }}" target="_blank">{{ extension.author.name }}</a></dd>
-
-              <dt>License</dt>
-              <dd><a href="{{ extension.license.url }}" target="_blank">{{ extension.license.name }}</a></dd>
-
-              <dt>Source code</dt>
-              <dd><a href="{{ extension.repo }}" target="_blank">{{ extension.repo|repoName }}</a></dd>
-
-              <dt>Minimum FOSSBilling version</dt>
-              <dd>{{ extension.releases[0].min_fossbilling_version }}</dd>
-            </dl> 
-          </div>
+    </div>
+    <div class="col-md-3">
+      <!-- Extension info -->
+      <div class="card">
+        <div class="card-header">
+          <h4>Extension information</h4>
         </div>
-        <!-- Extension releases -->
-        <div class="card mt-2">
-          <div class="card-header">
-            <h4>Extension releases</h4>
-          </div>
-          <div class="card-body">
-            <ul>
-              {% for release in extension.releases %}
-                <li>
-                  <strong>Version: {{ release.tag }}</strong><br>
-                  Date: {{ release.date }}<br>
-                  Minimum FOSSBilling Version: {{ release.min_fossbilling_version }}<br>
-                  <a href="{{ release.download_url }}" target="_blank">Download</a><br>
-                  <a href="{{ release.changelog_url }}" target="_blank">Changelog</a>
-                </li>
-                <hr>
-              {% endfor %}
-            </ul>
-          </div>
+        <div class="card-body">
+          <dl>
+            <dt>Website</dt>
+            <dd><a href="{{ extension.website }}" target="_blank">{{ extension.website }}</a></dd>
+
+            <dt>Publisher</dt>
+            <dd><a href="{{ extension.author.url }}" target="_blank">{{ extension.author.name }}</a></dd>
+
+            <dt>License</dt>
+            <dd><a href="{{ extension.license.url }}" target="_blank">{{ extension.license.name }}</a></dd>
+
+            <dt>Source code</dt>
+            <dd><a href="{{ extension.repo }}" target="_blank">{{ extension.repo|repoName }}</a></dd>
+
+            <dt>Minimum FOSSBilling version</dt>
+            <dd>{{ extension.releases[0].min_fossbilling_version }}</dd>
+          </dl> 
+        </div>
+      </div>
+      <!-- Extension releases -->
+      <div class="card mt-2">
+        <div class="card-header">
+          <h4>Extension releases</h4>
+        </div>
+        <div class="card-body">
+          <ul>
+            {% for release in extension.releases %}
+              <li>
+                <strong>Version: {{ release.tag }}</strong><br>
+                Date: {{ release.date }}<br>
+                Minimum FOSSBilling Version: {{ release.min_fossbilling_version }}<br>
+                <a href="{{ release.download_url }}" target="_blank">Download</a><br>
+                <a href="{{ release.changelog_url }}" target="_blank">Changelog</a>
+              </li>
+              <hr>
+            {% endfor %}
+          </ul>
         </div>
       </div>
     </div>
+  </div>
 {% endblock %}
