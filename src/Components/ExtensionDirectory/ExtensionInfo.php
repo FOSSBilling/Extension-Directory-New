@@ -9,15 +9,19 @@ use League\CommonMark\Extension\CommonMark\Node\Block\BlockQuote;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 use ElGigi\CommonMarkEmoji\EmojiExtension;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Component\Finder\Finder;
 
 class ExtensionInfo
 {
+
     public static function getAllExtensions(bool $convertReadme = true, object $cacheService): array
     {
-        $extensionList = Tools::getFileList(BASE_PATH . DIRECTORY_SEPARATOR . 'Library' . DIRECTORY_SEPARATOR . 'Extensions', 'php');
+        $finder = new Finder();
+        $finder->files()->in(BASE_PATH . DIRECTORY_SEPARATOR . 'Library' . DIRECTORY_SEPARATOR . 'Extensions')->name('*.php');
+
         $extensions = [];
-        foreach ($extensionList as $extension) {
-            $extension = basename($extension, ".php");
+        foreach ($finder as $file) {
+            $extension = $file->getBasename('.php');
             $info = self::getExtensionInfo($extension, $convertReadme, $cacheService);
             if ($info) {
                 $extensions[] = $info;

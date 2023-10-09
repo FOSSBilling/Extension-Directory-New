@@ -6,24 +6,9 @@ use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\Dotenv\Dotenv;
 
 define('BASE_PATH', __DIR__);
-define('PATH_CACHE', __DIR__ . DIRECTORY_SEPARATOR . 'Cache');
-
-// Load the composer autoloader
-require_once BASE_PATH . DIRECTORY_SEPARATOR . 'Vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
-
-// Load the .env file
-$dotenv = new Dotenv();
-$dotenv->load(__DIR__ . DIRECTORY_SEPARATOR . '.env');
-if (file_exists(__DIR__ . DIRECTORY_SEPARATOR . '.env.local')) {
-    $dotenv->overload(__DIR__ . DIRECTORY_SEPARATOR .  '.env.local');
-}
-
-// Now register the AntLoader autoloader
-$loader = require_once BASE_PATH . DIRECTORY_SEPARATOR . 'App' . DIRECTORY_SEPARATOR . 'Autoloader.php';
-$loader->register(true);
+require_once BASE_PATH . DIRECTORY_SEPARATOR . 'App' . DIRECTORY_SEPARATOR . 'Bootstrap.php';
 
 // Setup Dependency Injection
 $container = new Container();

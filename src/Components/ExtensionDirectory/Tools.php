@@ -6,23 +6,6 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class Tools
 {
-    /** 
-     * @return array<string> 
-     */
-    public static function getFileList(string $dir, ?string $extension = null, ?bool $returnPath = false)
-    {
-        $dir = new \RecursiveDirectoryIterator($dir);
-        $iterator = new \RecursiveIteratorIterator($dir);
-        $files = array();
-        foreach ($iterator as $file) {
-            if (pathinfo($file, PATHINFO_EXTENSION) == $extension || $extension == null) {
-                $files[] = ($returnPath) ? $file->getPathname() : $file->getFilename();
-            }
-        }
-
-        return $files;
-    }
-
     /**
      * Returns the completed license info depending on what items are missing.
      * As long as the SPDX ID is passed, this function will fetch the name of the license as well as a link to it.

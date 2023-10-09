@@ -1,0 +1,11 @@
+<?php
+
+namespace ExtensionDirectory\Authors;
+
+class :id:
+{
+    const type = ':type:';
+    const name = ':name:';
+    const id   = ':id:';
+    const URL  = ':url:';
+}
