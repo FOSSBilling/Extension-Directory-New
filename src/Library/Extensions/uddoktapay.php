@@ -9,13 +9,10 @@ class uddoktapay
     const description = 'UddoktaPay extension for FOSSBilling';
     const license = [
         'id'  => 'MIT',
-        'URL' => 'https://github.com/UddoktaPay/FOSSBilling/blob/master/LICENSE'
+        'url' => 'https://github.com/UddoktaPay/FOSSBilling/blob/master/LICENSE'
     ];
     const readmeUrl = 'https://raw.githubusercontent.com/UddoktaPay/FOSSBilling/main/README.md';
-    const source = [
-        'type' => 'github',
-        'repo' => 'UddoktaPay/FOSSBilling'
-    ];
+    const repo = 'https://github.com/UddoktaPay/FOSSBilling';
     const website = 'https://uddoktapay.com';
     const icon_url = 'https://raw.githubusercontent.com/UddoktaPay/FOSSBilling/master/UddoktaPay/UddoktaPay.png';
 

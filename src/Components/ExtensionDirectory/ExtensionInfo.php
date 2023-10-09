@@ -108,7 +108,7 @@ class ExtensionInfo
             'releases'     => $releases,
             'author'       => Tools::returnAuthorInfo($extension::author),
             'license'      => $license,
-            'source'       => Tools::getRepoInfo($extension::source),
+            'repo'         => $extension::repo,
             'icon_url'     => $extension::icon_url,
             'website'      => $extension::website,
             'readme'       => $readme,

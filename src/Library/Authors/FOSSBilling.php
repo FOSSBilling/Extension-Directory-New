@@ -7,5 +7,5 @@ class FOSSBilling
     const type = 'organization';
     const name = 'FOSSBilling';
     const id   = 'fossbilling';
-    const URL  = 'https://fossbilling.org';
+    const url  = 'https://fossbilling.org';
 }

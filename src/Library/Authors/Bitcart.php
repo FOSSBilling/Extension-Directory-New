@@ -7,5 +7,5 @@ class Bitcart
     const type = 'organization';
     const name = 'Bitcart';
     const id   = 'bitcart';
-    const URL  = 'https://bitcart.ai/';
+    const url  = 'https://bitcart.ai/';
 }

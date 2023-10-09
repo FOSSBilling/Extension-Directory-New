@@ -9,13 +9,10 @@ class razorpay
     const description = 'Razorpay extension for FOSSBilling';
     const license = [
         'id'  => 'apache-2.0',
-        'URL' => 'https://github.com/albinvar/Razorpay-FOSSBilling/blob/1.x-prod/LICENSE'
+        'url' => 'https://github.com/albinvar/Razorpay-FOSSBilling/blob/1.x-prod/LICENSE'
     ];
     const readmeUrl = 'https://raw.githubusercontent.com/albinvar/Razorpay-FOSSBilling/1.x-prod/README.md';
-    const source = [
-        'type' => 'github',
-        'repo' => 'albinvar/Razorpay-FOSSBilling'
-    ];
+    const repo = 'https://github.com/albinvar/Razorpay-FOSSBilling';
     const website = 'https://razorpay.com';
     const icon_url = 'https://raw.githubusercontent.com/albinvar/assets/main/fossbilling/razorpay-glyph-cropped.svg';
 

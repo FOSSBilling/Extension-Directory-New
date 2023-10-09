@@ -11,10 +11,7 @@ class example
         'id' => 'apache-2.0'
     ];
     const readmeUrl = 'https://raw.githubusercontent.com/FOSSBilling/example-module/main/README.md';
-    const source = [
-        'type' => 'github',
-        'repo' => 'FOSSBilling/example-module'
-    ];
+    const repo = 'https://github.com/FOSSBilling/example-module';
     const website = 'https://fossbilling.org';
     const icon_url = 'https://raw.githubusercontent.com/FOSSBilling/example-module/main/src/icon.svg';
 

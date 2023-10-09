@@ -6,6 +6,7 @@ use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use ExtensionDirectory\TwigFilters;
 
 define('BASE_PATH', __DIR__);
 require_once BASE_PATH . DIRECTORY_SEPARATOR . 'App' . DIRECTORY_SEPARATOR . 'Bootstrap.php';
@@ -29,6 +30,10 @@ $twig = Twig::create(BASE_PATH . DIRECTORY_SEPARATOR . 'Templates', [
     'debug' => true
 ]);
 $twig->addExtension(new \Twig\Extension\DebugExtension());
+
+// Register custom filters
+$twig->addExtension(new TwigFilters());
+
 $app->add(TwigMiddleware::create($app, $twig));
 
 // Require the routes file and pass the $app instance to it

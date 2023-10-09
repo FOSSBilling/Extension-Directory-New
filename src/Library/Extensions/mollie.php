@@ -11,10 +11,7 @@ class mollie
         'id' => 'apache-2.0'
     ];
     const readmeUrl = 'https://raw.githubusercontent.com/FOSSBilling/Mollie/main/README.md';
-    const source = [
-        'type' => 'github',
-        'repo' => 'FOSSBilling/mollie'
-    ];
+    const repo = 'https://github.com/FOSSBilling/mollie';
     const website = 'https://fossbilling.org';
     const icon_url = 'https://raw.githubusercontent.com/FOSSBilling/Mollie/main/src/Mollie.png';
 

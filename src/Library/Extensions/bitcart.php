@@ -9,13 +9,10 @@ class bitcart
     const description = 'Bitcart extension for FOSSBilling';
     const license = [
         'id'  => 'MIT',
-        'URL' => 'https://github.com/bitcart/bitcart-fossbilling/blob/master/LICENSE'
+        'url' => 'https://github.com/bitcart/bitcart-fossbilling/blob/master/LICENSE'
     ];
     const readmeUrl = 'https://raw.githubusercontent.com/bitcart/bitcart-fossbilling/master/README.md';
-    const source = [
-        'type' => 'github',
-        'repo' => 'bitcart/bitcart-fossbilling'
-    ];
+    const repo = 'https://github.com/bitcart/bitcart-fossbilling';
     const website = 'https://bitcart.ai/';
     const icon_url = 'https://raw.githubusercontent.com/bitcart/bitcart-fossbilling/master/Bitcart/Bitcart.png';
 
