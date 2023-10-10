@@ -14,19 +14,22 @@ use Symfony\Component\Finder\Finder;
 class ExtensionInfo
 {
 
-    public static function getAllExtensions(bool $convertReadme = true, object $cacheService): array
+    public static function getExtensionList(bool $convertReadme = true, object $cacheService, array $filter = [], array $sort = [], int $page = 1, int $itemsPerPage = 100): array
     {
         $finder = new Finder();
         $finder->files()->in(BASE_PATH . DIRECTORY_SEPARATOR . 'Library' . DIRECTORY_SEPARATOR . 'Extensions')->name('*.php');
+        $data = self::handlePagination($finder, $page, $itemsPerPage);
 
         $extensions = [];
-        foreach ($finder as $file) {
-            $extension = $file->getBasename('.php');
+        foreach ($data as $file) {
+            $extension = basename($file, '.php');
             $info = self::getExtensionInfo($extension, $convertReadme, $cacheService);
             if ($info) {
                 $extensions[] = $info;
             }
         }
+
+        self::handleSortAndFilter($extensions, $sort, $filter);
 
         return $extensions;
     }
@@ -113,5 +116,55 @@ class ExtensionInfo
             'website'      => $extension::website,
             'readme'       => $readme,
         ];
+    }
+
+    private static function handlePagination(Finder $finder, int $page, int $itemsPerPage)
+    {
+        $itemsPerPage = ($itemsPerPage > 100) ? 100 : $itemsPerPage;
+        $totalExtensions = $finder->count();
+        $totalPages = ceil($totalExtensions / $itemsPerPage);
+
+        $page = ($page > $totalPages) ? $totalPages : $page;
+        $offset = ($page - 1) * $itemsPerPage;
+
+        $data = iterator_to_array($finder);
+        return array_slice($data, $offset, $itemsPerPage);
+    }
+
+    private static function handleSortAndFilter(array &$data, array $sort, array $filter)
+    {
+        $sort['by'] ??= 'name';
+        $sort['direction'] ??= 'desc';
+
+        $filter['by'] ??= 'none';
+        $filter['mustBe'] ??= '';
+
+        switch ($filter['by']) {
+            case 'type':
+                $data = array_filter($data, function ($extension) use ($filter) {
+                    return $extension['type'] == $filter['mustBe'];
+                }, ARRAY_FILTER_USE_BOTH);
+                break;
+            default:
+                break;
+        }
+
+        switch ($sort['by']) {
+            default:
+            case 'name':
+                usort($data, function ($a, $b) {
+                    return strcmp($a['name'], $b['name']);
+                });
+                break;
+        }
+
+        switch ($sort['direction']) {
+            case 'asc':
+                $data = array_reverse($data);
+                break;
+            default:
+            case 'desc':
+                break;
+        }
     }
 }

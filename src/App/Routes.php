@@ -8,7 +8,7 @@ use ExtensionDirectory\BadgeBuilder;
 
 return function (App $app) {
     $app->get('/', function (Request $request, Response $response, $args) {
-        $extensionList = ExtensionDirectory\ExtensionInfo::getAllExtensions(true, $this->get('cache'));
+        $extensionList = ExtensionDirectory\ExtensionInfo::getExtensionList(true, $this->get('cache'));
         if (!$extensionList) {
             // TODO: Handle errors here
         } else {
@@ -19,7 +19,7 @@ return function (App $app) {
     })->setName('index');
 
     $app->get('/about', function (Request $request, Response $response, $args) {
-            return ResponseHelper::renderTwigTemplate($response, $request, 'about.html.twig');
+        return ResponseHelper::renderTwigTemplate($response, $request, 'about.html.twig');
     })->setName('about');
 
     $app->get('/extension/{id}', function (Request $request, Response $response, $args) {
@@ -35,17 +35,20 @@ return function (App $app) {
 
     $app->group('/api', function ($group) {
         $group->any('/list', function (Request $request, Response $response, $args) {
-            $extensionList = ExtensionDirectory\ExtensionInfo::getAllExtensions(false, $this->get('cache'));
             $GET = $request->getQueryParams();
             $POST = $request->getParsedBody();
             $filterType = $GET['type'] ?? $POST['type'] ?? null;
 
-            // Filter the type if needed
             if (!empty($filterType)) {
-                $extensionList = array_filter($extensionList, function ($extension) use ($filterType) {
-                    return $extension['type'] == $filterType;
-                }, ARRAY_FILTER_USE_BOTH);
+                $filter = [
+                    'by' => 'type',
+                    'mustBe' => $filterType,
+                ];
+            } else {
+                $filter = [];
             }
+
+            $extensionList = ExtensionDirectory\ExtensionInfo::getExtensionList(false, $this->get('cache'), $filter);
 
             if (!$extensionList) {
                 // TODO: Handle errors here
