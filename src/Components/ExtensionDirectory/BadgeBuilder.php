@@ -14,7 +14,7 @@ class BadgeBuilder
         return $cacheService->get($key, function (ItemInterface $item) use ($id, $type, $color, $cacheService): string {
             $item->expiresAfter(86400); // Retain this cache for one day
 
-            $extension = ExtensionInfo::getExtensionInfo($id, false, $cacheService);
+            $extension = ExtensionManager::getExtensionInfo($id, false, $cacheService);
 
             if (!$extension) {
                 // Reduced cache length if there was an error so it can ideally self-resolve

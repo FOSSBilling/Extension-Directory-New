@@ -11,9 +11,8 @@ use ElGigi\CommonMarkEmoji\EmojiExtension;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\Finder\Finder;
 
-class ExtensionInfo
+class ExtensionManager
 {
-
     public static function getExtensionList(bool $convertReadme = true, object $cacheService, array $filter = [], array $sort = [], int $page = 1, int $itemsPerPage = 100): array
     {
         $finder = new Finder();

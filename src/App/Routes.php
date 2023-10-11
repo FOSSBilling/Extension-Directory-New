@@ -8,28 +8,28 @@ use ExtensionDirectory\BadgeBuilder;
 
 return function (App $app) {
     $app->get('/', function (Request $request, Response $response, $args) {
-        $extensionList = ExtensionDirectory\ExtensionInfo::getExtensionList(true, $this->get('cache'));
+        $extensionList = ExtensionDirectory\ExtensionManager::getExtensionList(true, $this->get('cache'));
         if (!$extensionList) {
             // TODO: Handle errors here
         } else {
             return ResponseHelper::renderTwigTemplate($response, $request, 'index.html.twig', [
                 'extensions' => $extensionList
-            ]);
+            ], $this->get('cache'));
         }
     })->setName('index');
 
     $app->get('/about', function (Request $request, Response $response, $args) {
-        return ResponseHelper::renderTwigTemplate($response, $request, 'about.html.twig');
+        return ResponseHelper::renderTwigTemplate($response, $request, 'about.html.twig', [], $this->get('cache'));
     })->setName('about');
 
     $app->get('/extension/{id}', function (Request $request, Response $response, $args) {
-        $extensionInfo = ExtensionDirectory\ExtensionInfo::getExtensionInfo($args['id'], true, $this->get('cache'));
+        $extensionInfo = ExtensionDirectory\ExtensionManager::getExtensionInfo($args['id'], true, $this->get('cache'));
         if (!$extensionInfo) {
             // TODO: Handle errors here
         } else {
             return ResponseHelper::renderTwigTemplate($response, $request, 'extensionInfo.html.twig', [
                 'extension' => $extensionInfo
-            ]);
+            ], $this->get('cache'));
         }
     })->setName('extension');
 
@@ -48,7 +48,7 @@ return function (App $app) {
                 $filter = [];
             }
 
-            $extensionList = ExtensionDirectory\ExtensionInfo::getExtensionList(false, $this->get('cache'), $filter);
+            $extensionList = ExtensionDirectory\ExtensionManager::getExtensionList(false, $this->get('cache'), $filter);
 
             if (!$extensionList) {
                 // TODO: Handle errors here
@@ -58,7 +58,7 @@ return function (App $app) {
         });
 
         $group->get('/extension/{id}', function (Request $request, Response $response, $args) {
-            $extensionInfo = ExtensionDirectory\ExtensionInfo::getExtensionInfo($args['id'], false, $this->get('cache'));
+            $extensionInfo = ExtensionDirectory\ExtensionManager::getExtensionInfo($args['id'], false, $this->get('cache'));
             if (!$extensionInfo) {
                 // TODO: Handle errors here
             } else {
