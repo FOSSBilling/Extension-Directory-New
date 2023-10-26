@@ -13,7 +13,7 @@ use Symfony\Component\Finder\Finder;
 
 class ExtensionManager
 {
-    public static function getExtensionList(bool $convertReadme = true, object $cacheService, array $filter = [], array $sort = [], int $page = 1, int $itemsPerPage = 100): array
+    public static function getExtensionList(bool $convertReadme, object $cacheService, array $filter = [], array $sort = [], int $page = 1, int $itemsPerPage = 100): array
     {
         $finder = new Finder();
         $finder->files()->in(BASE_PATH . DIRECTORY_SEPARATOR . 'Library' . DIRECTORY_SEPARATOR . 'Extensions')->name('*.php');
@@ -33,7 +33,7 @@ class ExtensionManager
         return $extensions;
     }
 
-    public static function getExtensionInfo(string $id, bool $convertReadme = true, object $cacheService): array
+    public static function getExtensionInfo(string $id, bool $convertReadme, object $cacheService): array
     {
         // Convert the ID to lowercase and build the fully qualified class name
         $id = strtolower($id);

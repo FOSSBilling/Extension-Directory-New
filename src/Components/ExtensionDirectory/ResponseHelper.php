@@ -17,7 +17,7 @@ class ResponseHelper
         return $view->render($response, $template, $data);
     }
 
-    public static function renderJson(bool $error = false, string|array $result, Response $response, ?int $code = null)
+    public static function renderJson(bool $error, string|array $result, Response $response, ?int $code = null)
     {
         if ($error) {
             $response->getBody()->write(json_encode(['error' => ['message' => $result]]));
