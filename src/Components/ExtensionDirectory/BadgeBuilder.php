@@ -41,7 +41,7 @@ class BadgeBuilder
                 case 'repo_type_1':
                     $repoUrl = $extension['repo'];
                     $logo = Tools::getRepoType($repoUrl);
-                    $badgeUrl = "https://shields.io/badge/Repository-Soure_Code-{$color}?logo={$logo}";
+                    $badgeUrl = "https://shields.io/badge/Repository-Source_Code-{$color}?logo={$logo}";
                     break;
                 case 'repo_type_2':
                     $repoUrl = $extension['repo'];
