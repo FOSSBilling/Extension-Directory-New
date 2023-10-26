@@ -7,6 +7,14 @@ use Symfony\Component\Finder\Finder;
 
 class Stats
 {
+    public static function calculatePagination(object $cacheService, int $itemsPerPage = 100): int
+    {
+        $itemsPerPage = ($itemsPerPage > 100) ? 100 : $itemsPerPage;
+        $stats = self::getStats($cacheService);
+
+        return ceil($stats['total_extensions'] / $itemsPerPage);
+    }
+
     public static function getStats(object $cacheService)
     {
         return $cacheService->get('stats', function (ItemInterface $item): array {
@@ -43,7 +51,6 @@ class Stats
             return $stats;
         });
     }
-
 
     private static function getExtensions(): array
     {

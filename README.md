@@ -5,19 +5,39 @@ All basic functionality from the original extension directory is now implemented
 
 ## Running a dev instance
 
-1. Ensure you have the necessary composer packages installed by doing `composer install` from the root directory
-2. Move to the `src` directory by doing `cd src`
-3. Start the dev server by doing `php -S localhost:8000`
+1. Ensure you have the necessary composer packages installed by doing `composer install` from the root directory.
+3. Start the dev server by doing `php -S localhost:8000` from within the `src` directory.
 
-### Changing the enviroment variables
+### Changing the environment variables
 
 1. Make a copy of the `.env` file and rename it to `.env.local`
-2. Open the `.env.local` and edit it to apply your chagnes. This fill will be ignored by the version control and can be used to overwrite the default options. 
+2. Open the `.env.local` and edit it to apply your changes. This file will be ignored by the version control and can be used to overwrite the default options.
 
-## Adding a new extension or author
+## Adding or updating an extension
 
-- All extensions are stored under `src/Library/Extensions`.
-- All authors are stored under `src/Library/Authors`.
+### Considerations before adding an extension
+
+- Your module's readme is expected to be written with markdown and any HTML in your module's readme will be automatically stripped as a safety precaution.
+
+### Adding
+
+TODO, but for now you can find it under `src/Library/Extensions` and add one.
+
+### Updating
+
+TODO, but for now you can find it under `src/Library/Extensions` and update it.
+
+## Adding or updating an author
+
+### Adding
+
+1. Install the composer dependencies from within the root directory by performing `composer install`
+2. Move to the `src` directory.
+3. Use `php console.php add-author` and then follow the on-screen steps to add a new author.
+
+### Updating
+
+TODO, but for now you can find it under `src/Library/Authors` and update it.
 
 ## License
 Each module is licensed under the terms set by the author. Please see the `LICENSE` file in each module for more information.

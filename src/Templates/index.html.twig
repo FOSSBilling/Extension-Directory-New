@@ -4,25 +4,101 @@
   <p>Welcome to the FOSSBilling Extension Directory.<br/>
     Please note that only extensions that can be auto-installed from within FOSSBilling are included in the directory at this time. <br/>
     For a list of other working extenstions i.e. domain registrars modules please <a href="https://fossbilling.org/docs/extensions" target="_blank"> our documentation</a>.</p>
-  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    {% for extension in extensions %}
-      <a href="{{ url_for('extension', { 'id': extension.id }) }}" class="text-decoration-none">
-        <div class="col">
-          <div class="card mb-3" style="max-width: 540px;">
-            <div class="row g-0">
-              <div class="col-md-12">
-                <div class="card-body">
-                  <div class="d-flex align-items-center">
-                    <img src= "{{ extension.icon_url }}" class="img-fluid rounded-start ml-1" style="max-width 24px; max-height: 24px;">
-                    <h5 class="mb-0">{{ extension.name }}</h5>
+  <div class="card">
+    <div class="card-header">
+      <p>Displaying {{ extensions|length }} of {{ stats.total_extensions }} extensions</p>
+
+      <select id="perPage">
+        {% set perPage = get.perPage | default('25') %}
+        {% for i in 1..25 %}
+          <option value="{{ i }}" {% if perPage == i %} selected {% endif %}>{{ i }} per page</option>
+        {% endfor %}
+      </select>
+
+      <select id="type">
+          {% set mustBe = get.mustBe | default('') %}
+          <option value="" {% if mustBe == '' %} selected {% endif %}>Any</option>
+          <option value="mod" {% if mustBe == 'mod' %} selected {% endif %}>Extension</option>
+          <option value="payment-gateway" {% if mustBe == 'payment-gateway' %} selected {% endif %}>Payment Gateway</option>
+      </select>
+
+      <select id="direction">
+        {% set direction = get.direction | default('desc') %}
+        <option value="desc" {% if direction == 'desc' %} selected {% endif %}>Descending</option>
+        <option value="asc" {% if direction == 'asc' %} selected {% endif %}>Ascending</option>
+      </select>
+    </div>
+    <div class="card-body">
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for extension in extensions %}
+          <a href="{{ url_for('extension', { 'id': extension.id }) }}" class="text-decoration-none">
+            <div class="col">
+              <div class="card mb-3" style="max-width: 540px;">
+                <div class="row g-0">
+                  <div class="col-md-12">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center">
+                        <img src= "{{ extension.icon_url }}" class="img-fluid rounded-start ml-1" style="max-width 24px; max-height: 24px;">
+                        <h5 class="mb-0">{{ extension.name }}</h5>
+                      </div>
+                      <p class="card-text">{{ extension.description }}</p>
+                    </div>
                   </div>
-                  <p class="card-text">{{ extension.description }}</p>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </a>
-    {% endfor %}
-  </div>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="card-footer d-flex justify-content-center">
+      {% set page = get.page | default('1') %}
+      <nav aria-label="Page navigation example">
+        <ul class="pagination pagination-lg">
+          <li class="page-item">
+            <a class="page-link" href="#" aria-label="Previous" onclick="updatePage({{ page - 1}})">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li class="page-item"><a class="page-link active" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#" aria-label="Next" onclick="updatePage({{ page + 1}})">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <script>
+      function updatePage(page) {
+        var params = new URLSearchParams(location.search);
+        params.set('page', page);
+        window.location.search = params.toString();
+      }
+
+      var mySelect = document.getElementById('perPage');
+      mySelect.onchange = (event) => {
+        var params = new URLSearchParams(location.search);
+        params.set('perPage', event.target.value);
+        window.location.search = params.toString();
+      }
+
+      var mySelect = document.getElementById('type');
+      mySelect.onchange = (event) => {
+        var params = new URLSearchParams(location.search);
+        params.set('by', 'type');
+        params.set('mustBe', event.target.value);
+        window.location.search = params.toString();
+      }
+
+      var mySelect = document.getElementById('direction');
+      mySelect.onchange = (event) => {
+        var params = new URLSearchParams(location.search);
+        params.set('direction', event.target.value);
+        window.location.search = params.toString();
+      }
+    </script>
 {% endblock %}

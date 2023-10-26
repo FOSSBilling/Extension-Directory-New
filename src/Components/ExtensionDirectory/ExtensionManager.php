@@ -140,9 +140,13 @@ class ExtensionManager
 
         switch ($filter['by']) {
             case 'type':
-                $data = array_filter($data, function ($extension) use ($filter) {
-                    return $extension['type'] == $filter['mustBe'];
-                }, ARRAY_FILTER_USE_BOTH);
+                if(empty($filter['mustBe'])){
+                    break;
+                } else {
+                    $data = array_filter($data, function ($extension) use ($filter) {
+                        return $extension['type'] == $filter['mustBe'];
+                    }, ARRAY_FILTER_USE_BOTH);
+                }
                 break;
             default:
                 break;

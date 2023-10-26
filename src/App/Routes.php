@@ -8,12 +8,19 @@ use ExtensionDirectory\BadgeBuilder;
 
 return function (App $app) {
     $app->get('/', function (Request $request, Response $response, $args) {
-        $extensionList = ExtensionDirectory\ExtensionManager::getExtensionList(true, $this->get('cache'));
+        $GET = $request->getQueryParams();
+        $page = $GET['page'] ?? 1;
+        $perPage = $GET['perPage'] ?? 25;
+        $sort = ['direction' => $GET['direction'] ?? 'desc', 'by' => $GET['sort'] ?? 'name'];
+        $filter = ['by' => $GET['by'] ?? '', 'mustBe' => $GET['mustBe'] ?? ''];
+
+        $extensionList = ExtensionDirectory\ExtensionManager::getExtensionList(true, $this->get('cache'), $filter, $sort, $page, $perPage);
         if (!$extensionList) {
             // TODO: Handle errors here
         } else {
             return ResponseHelper::renderTwigTemplate($response, $request, 'index.html.twig', [
-                'extensions' => $extensionList
+                'extensions' => $extensionList,
+                'get' => $GET,
             ], $this->get('cache'));
         }
     })->setName('index');
