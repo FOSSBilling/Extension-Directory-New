@@ -33,6 +33,7 @@ $twig->addExtension(new \Twig\Extension\DebugExtension());
 
 // Register custom filters
 $twig->addExtension(new TwigFilters());
+$twig->addExtension(new Marek\Twig\ByteUnitsExtension());
 
 $app->add(TwigMiddleware::create($app, $twig));
 

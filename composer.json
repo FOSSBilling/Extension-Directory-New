@@ -14,6 +14,7 @@
         "composer/spdx-licenses": "^1.5",
         "elgigi/commonmark-emoji": "^2.0",
         "league/commonmark": "^2.4",
+        "marioblazek/twig-byte-units-extension": "^1.1",
         "php-di/php-di": "^7.0",
         "slim/psr7": "^1.6",
         "slim/slim": "^4",

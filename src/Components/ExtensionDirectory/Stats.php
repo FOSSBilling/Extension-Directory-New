@@ -7,12 +7,17 @@ use Symfony\Component\Finder\Finder;
 
 class Stats
 {
-    public static function calculatePagination(object $cacheService, int $itemsPerPage = 100): int
+    public static function getDirSize(string $path): int
     {
-        $itemsPerPage = ($itemsPerPage > 100) ? 100 : $itemsPerPage;
-        $stats = self::getStats($cacheService);
+        $size = 0;
 
-        return ceil($stats['total_extensions'] / $itemsPerPage);
+        $di = new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS);
+        $ri = new \RecursiveIteratorIterator($di, \RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($ri as $file) {
+            $size += $file->isDir() ?  self::getDirSize($file->getRealPath()) : filesize($file->getRealPath());
+        }
+    
+        return $size;
     }
 
     public static function getStats(object $cacheService)
@@ -33,6 +38,7 @@ class Stats
                 ],
                 'total_extensions' => 0,
                 'total_authors' => 0,
+                'cache_size' => self::getDirSize(PATH_CACHE),
             ];
 
             // Now update the stats for extensions
