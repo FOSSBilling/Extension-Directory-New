@@ -74,9 +74,11 @@ return function (App $app) {
         });
 
         $group->get('/extension/{id}/badges/{type}', function (Request $request, Response $response, $args) {
-            $badge = BadgeBuilder::buildABadge($args['id'], $args['type'], $this->get('cache'));
+            $GET = $request->getQueryParams();
+            $badge = BadgeBuilder::buildABadge($args['id'], $args['type'], $this->get('cache'), $GET['color'] ?? null);
+            $response = $response->withHeader('Content-Type', 'image/svg+xml');
             $response->getBody()->write($badge);
             return $response;
-        });
+        })->setName('badge');
     });
 };

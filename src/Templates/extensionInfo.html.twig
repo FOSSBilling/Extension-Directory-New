@@ -24,19 +24,35 @@
         <div class="card-body">
           <dl>
             <dt>Website</dt>
-            <dd><a href="{{ extension.website }}" target="_blank">{{ extension.website }}</a></dd>
+            <dd>
+              <a href="{{ extension.website }}" target="_blank">
+                <img src="{{ url_for('badge', { 'id': extension.id, 'type': 'website' }) }}?color=7FFFD4" alt="{{ extension.website }}">
+              </a>
+            </dd>
 
-            <dt>Publisher</dt>
-            <dd><a href="{{ extension.author.url }}" target="_blank">{{ extension.author.name }}</a></dd>
+            <dt>Author</dt>
+            <dd>
+              <a href="{{ extension.author.url }}" target="_blank">
+                <img src="{{ url_for('badge', { 'id': extension.id, 'type': 'author' }) }}?color=FFD700" alt="{{ extension.author.name }}">
+              </a>
+            </dd>
 
             <dt>License</dt>
-            <dd><a href="{{ extension.license.url }}" target="_blank">{{ extension.license.name }}</a></dd>
+            <dd>
+              <a href="{{ extension.license.url }}" target="_blank">
+                <img src="{{ url_for('badge', { 'id': extension.id, 'type': 'license' }) }}?color=blue" alt="{{ extension.license.name }}">
+              </a>
+            </dd>
 
             <dt>Source code</dt>
-            <dd><a href="{{ extension.repo }}" target="_blank">{{ extension.repo|repoName }}</a></dd>
+            <dd>
+              <a href="{{ extension.repo }}" target="_blank">
+                <img src="{{ url_for('badge', { 'id': extension.id, 'type': 'repo_type_2'}) }}?color=2E8B57" alt="{{ extension.repo|repoName }}">
+              </a>
+            </dd>
 
             <dt>Minimum FOSSBilling version</dt>
-            <dd>{{ extension.releases[0].min_fossbilling_version }}</dd>
+            <dd><img src="{{ url_for('badge', { 'id': extension.id, 'type': 'min_fossbilling_version'}) }}?color=orange" alt="{{ extension.repo|repoName }}"></dd>
           </dl> 
         </div>
       </div>
