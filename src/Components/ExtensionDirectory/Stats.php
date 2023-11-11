@@ -12,7 +12,7 @@ class Stats
         $size = 0;
 
         $di = new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS);
-        $ri = new \RecursiveIteratorIterator($di, \RecursiveIteratorIterator::CHILD_FIRST);
+        $ri = new \RecursiveIteratorIterator($di);
         foreach ($ri as $file) {
             $size += $file->isDir() ?  self::getDirSize($file->getRealPath()) : filesize($file->getRealPath());
         }

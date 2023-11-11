@@ -22,6 +22,12 @@
           <option value="payment-gateway" {% if mustBe == 'payment-gateway' %} selected {% endif %}>Payment Gateway</option>
       </select>
 
+      <select id="sort">
+        {% set sort = get.sort | default('desc') %}
+        <option value="name" {% if sort == 'name' %} selected {% endif %}>Name</option>
+        <option value="type" {% if sort == 'type' %} selected {% endif %}>Type</option>
+      </select>
+
       <select id="direction">
         {% set direction = get.direction | default('desc') %}
         <option value="desc" {% if direction == 'desc' %} selected {% endif %}>Descending</option>
@@ -98,6 +104,13 @@
       mySelect.onchange = (event) => {
         var params = new URLSearchParams(location.search);
         params.set('direction', event.target.value);
+        window.location.search = params.toString();
+      }
+
+      var mySelect = document.getElementById('sort');
+      mySelect.onchange = (event) => {
+        var params = new URLSearchParams(location.search);
+        params.set('sort', event.target.value);
         window.location.search = params.toString();
       }
     </script>

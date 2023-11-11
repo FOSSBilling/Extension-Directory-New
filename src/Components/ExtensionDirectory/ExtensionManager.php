@@ -138,18 +138,21 @@ class ExtensionManager
         $filter['by'] ??= 'none';
         $filter['mustBe'] ??= '';
 
-        switch ($filter['by']) {
-            case 'type':
-                if(empty($filter['mustBe'])){
-                    break;
-                } else {
+        if (!empty($filter['mustBe'])) {
+            switch ($filter['by']) {
+                case 'type':
                     $data = array_filter($data, function ($extension) use ($filter) {
                         return $extension['type'] == $filter['mustBe'];
                     }, ARRAY_FILTER_USE_BOTH);
-                }
-                break;
-            default:
-                break;
+                    break;
+                case 'author':
+                    $data = array_filter($data, function ($extension) use ($filter) {
+                        return $extension['author']['name'] == $filter['mustBe'];
+                    }, ARRAY_FILTER_USE_BOTH);
+                    break;
+                default:
+                    break;
+            }
         }
 
         switch ($sort['by']) {
@@ -157,6 +160,11 @@ class ExtensionManager
             case 'name':
                 usort($data, function ($a, $b) {
                     return strcmp($a['name'], $b['name']);
+                });
+                break;
+            case 'type':
+                usort($data, function ($a, $b) {
+                    return strcmp($a['type'], $b['type']);
                 });
                 break;
         }
