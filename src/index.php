@@ -22,9 +22,16 @@ $container->set('cache', function () {
     }
 });
 
-// Now create the app
+// Now create the apps
 AppFactory::setContainer($container);
 $app = AppFactory::create();
+
+// If cache is enabled, enable the router cache
+if ($_ENV["CACHE_ENABLED"] === 'true') {
+    $routeCollector = $app->getRouteCollector();
+    $routeCollector->setCacheFile(PATH_CACHE . DIRECTORY_SEPARATOR . 'Routes.cache');
+}
+
 $twig = Twig::create(BASE_PATH . DIRECTORY_SEPARATOR . 'Templates', [
     'cache' => $_ENV["CACHE_ENABLED"] === 'true' ? PATH_CACHE : false,
     'debug' => true
