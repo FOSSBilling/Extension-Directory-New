@@ -1,6 +1,11 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Console\\\\Helper\\\\HelperInterface\\:\\:ask\\(\\)\\.$#"
+			count: 4
+			path: src/App/AddAuthorCommand.php
+
+		-
 			message: "#^Undefined variable\\: \\$this$#"
 			count: 8
 			path: src/App/Routes.php
