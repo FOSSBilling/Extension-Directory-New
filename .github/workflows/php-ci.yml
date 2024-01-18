@@ -25,7 +25,7 @@ jobs:
 
       - name: Cache Composer Dependencies
         id: composer-cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ./src/Vendor
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -52,7 +52,7 @@ jobs:
 
       - name: Cache Composer Dependencies
         id: composer-cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ./src/Vendor
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
