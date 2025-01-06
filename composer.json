@@ -29,6 +29,6 @@
         "sort-packages": true
     },
     "require-dev": {
-        "phpstan/phpstan": "^1.10"
+        "phpstan/phpstan": "^2.1"
     }
 }
