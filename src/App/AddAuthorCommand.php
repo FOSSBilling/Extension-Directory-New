@@ -6,22 +6,21 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Helper\QuestionHelper;
 
+#[AsCommand(
+    name: 'add-author',
+    description: 'Adds a new author to the Extension Directory.'
+    )]
 class AddAuthorCommand extends Command
 {
     private string $templatePath = __DIR__ . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR . 'Author.template';
     private string $libraryPath = BASE_PATH . DIRECTORY_SEPARATOR . 'Library' . DIRECTORY_SEPARATOR . 'Authors';
 
-    protected static $defaultName = 'add-author';
-
-    protected function configure()
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->setDescription('Adds a new author to the Extension Directory.');
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $helper = $this->getHelper('question');
+        $helper = new QuestionHelper();
         $io = new SymfonyStyle($input, $output);
 
         $io->title('Add a new author');
