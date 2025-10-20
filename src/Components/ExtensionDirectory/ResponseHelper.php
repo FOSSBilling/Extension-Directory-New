@@ -7,20 +7,21 @@ namespace ExtensionDirectory;
 use Slim\Views\Twig;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Symfony\Contracts\Cache\CacheInterface;
 
 class ResponseHelper
 {
-    public static function renderTwigTemplate(Response $response, Request $request, string $template, array $data = [], ?CacheInterface $cacheService = null): Response
+    public function __construct(
+        private Stats $stats
+    ) {}
+
+    public function renderTwigTemplate(Response $response, Request $request, string $template, array $data = []): Response
     {
         $view = Twig::fromRequest($request);
-        if (is_object($cacheService)) {
-            $data['stats'] = Stats::getStats($cacheService);
-        }
+        $data['stats'] = $this->stats->getStats();
         return $view->render($response, $template, $data);
     }
 
-    public static function renderJson(bool $error, string|array $result, Response $response, ?int $code = null)
+    public function renderJson(bool $error, string|array $result, Response $response, ?int $code = null): Response
     {
         if ($error) {
             $response->getBody()->write(json_encode(['error' => ['message' => $result]]));

@@ -3,55 +3,59 @@
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
-use ExtensionDirectory\ResponseHelper;
-use ExtensionDirectory\BadgeBuilder;
 
 return function (App $app) {
-    $app->get('/', function (Request $request, Response $response, $args) {
+    // Extract services once to avoid repetitive ->get() calls
+    $container = $app->getContainer();
+    $extensionManager = $container->get(\ExtensionDirectory\ExtensionManager::class);
+    $responseHelper = $container->get(\ExtensionDirectory\ResponseHelper::class);
+    $badgeBuilder = $container->get(\ExtensionDirectory\BadgeBuilder::class);
+
+    $app->get('/', function (Request $request, Response $response, $args) use ($extensionManager, $responseHelper) {
         $GET = $request->getQueryParams();
         $page = $GET['page'] ?? 1;
         $perPage = $GET['perPage'] ?? 25;
         $sort = ['direction' => $GET['direction'] ?? 'desc', 'by' => $GET['sort'] ?? 'name'];
         $filter = ['by' => $GET['by'] ?? '', 'mustBe' => $GET['mustBe'] ?? ''];
 
-        $extensionList = ExtensionDirectory\ExtensionManager::getExtensionList(true, $this->get('cache'), $filter, $sort, $page, $perPage);
+        $extensionList = $extensionManager->getExtensionList(true, $filter, $sort, $page, $perPage);
         if (!$extensionList) {
-            return ResponseHelper::renderTwigTemplate($response, $request, 'index.html.twig', [
+            return $responseHelper->renderTwigTemplate($response, $request, 'index.html.twig', [
                 'extensions' => [],
                 'get' => $GET,
                 'error' => 'Unable to load extensions. Please try again later.',
-            ], $this->get('cache'));
+            ]);
         }
 
-        return ResponseHelper::renderTwigTemplate($response, $request, 'index.html.twig', [
+        return $responseHelper->renderTwigTemplate($response, $request, 'index.html.twig', [
             'extensions' => $extensionList,
             'get' => $GET,
-        ], $this->get('cache'));
+        ]);
     })->setName('index');
 
-    $app->get('/about', function (Request $request, Response $response, $args) {
-        return ResponseHelper::renderTwigTemplate($response, $request, 'about.html.twig', [], $this->get('cache'));
+    $app->get('/about', function (Request $request, Response $response, $args) use ($responseHelper) {
+        return $responseHelper->renderTwigTemplate($response, $request, 'about.html.twig');
     })->setName('about');
 
-    $app->get('/extension/{id}', function (Request $request, Response $response, $args) {
-        $extensionInfo = ExtensionDirectory\ExtensionManager::getExtensionInfo($args['id'], true, $this->get('cache'));
+    $app->get('/extension/{id}', function (Request $request, Response $response, $args) use ($extensionManager, $responseHelper) {
+        $extensionInfo = $extensionManager->getExtensionInfo($args['id'], true);
         if (!$extensionInfo) {
             // Extension not found - return 404
             $response = $response->withStatus(404);
-            return ResponseHelper::renderTwigTemplate($response, $request, 'index.html.twig', [
+            return $responseHelper->renderTwigTemplate($response, $request, 'index.html.twig', [
                 'extensions' => [],
                 'get' => [],
                 'error' => 'Extension "' . htmlspecialchars($args['id']) . '" not found.',
-            ], $this->get('cache'));
+            ]);
         }
 
-        return ResponseHelper::renderTwigTemplate($response, $request, 'extensionInfo.html.twig', [
+        return $responseHelper->renderTwigTemplate($response, $request, 'extensionInfo.html.twig', [
             'extension' => $extensionInfo
-        ], $this->get('cache'));
+        ]);
     })->setName('extension');
 
-    $app->group('/api', function ($group) {
-        $group->any('/list', function (Request $request, Response $response, $args) {
+    $app->group('/api', function ($group) use ($extensionManager, $responseHelper, $badgeBuilder) {
+        $group->any('/list', function (Request $request, Response $response, $args) use ($extensionManager, $responseHelper) {
             $GET = $request->getQueryParams();
             $POST = $request->getParsedBody();
             $filterType = $GET['type'] ?? $POST['type'] ?? null;
@@ -65,27 +69,27 @@ return function (App $app) {
                 $filter = [];
             }
 
-            $extensionList = ExtensionDirectory\ExtensionManager::getExtensionList(false, $this->get('cache'), $filter);
+            $extensionList = $extensionManager->getExtensionList(false, $filter);
 
             if (!$extensionList) {
-                return ResponseHelper::renderJson(true, 'Unable to load extensions', $response, 500);
+                return $responseHelper->renderJson(true, 'Unable to load extensions', $response, 500);
             }
 
-            return ResponseHelper::renderJson(false, $extensionList, $response);
+            return $responseHelper->renderJson(false, $extensionList, $response);
         });
 
-        $group->get('/extension/{id}', function (Request $request, Response $response, $args) {
-            $extensionInfo = ExtensionDirectory\ExtensionManager::getExtensionInfo($args['id'], false, $this->get('cache'));
+        $group->get('/extension/{id}', function (Request $request, Response $response, $args) use ($extensionManager, $responseHelper) {
+            $extensionInfo = $extensionManager->getExtensionInfo($args['id'], false);
             if (!$extensionInfo) {
-                return ResponseHelper::renderJson(true, 'Extension not found', $response, 404);
+                return $responseHelper->renderJson(true, 'Extension not found', $response, 404);
             }
 
-            return ResponseHelper::renderJson(false, $extensionInfo, $response);
+            return $responseHelper->renderJson(false, $extensionInfo, $response);
         });
 
-        $group->get('/extension/{id}/badges/{type}', function (Request $request, Response $response, $args) {
+        $group->get('/extension/{id}/badges/{type}', function (Request $request, Response $response, $args) use ($badgeBuilder) {
             $GET = $request->getQueryParams();
-            $badge = BadgeBuilder::buildABadge($args['id'], $args['type'], $this->get('cache'), $GET['color'] ?? null);
+            $badge = $badgeBuilder->buildABadge($args['id'], $args['type'], $GET['color'] ?? null);
             $response = $response->withHeader('Content-Type', 'image/svg+xml');
             $response->getBody()->write($badge);
             return $response;

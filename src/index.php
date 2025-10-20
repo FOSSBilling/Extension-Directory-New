@@ -1,28 +1,22 @@
 <?php
 
-use DI\Container;
 use Slim\Factory\AppFactory;
 use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
-use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use ExtensionDirectory\TwigFilters;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
 define('BASE_PATH', __DIR__);
 require_once BASE_PATH . DIRECTORY_SEPARATOR . 'App' . DIRECTORY_SEPARATOR . 'Bootstrap.php';
 
-// Setup Dependency Injection
-$container = new Container();
-$container->set('cache', function () {
-    // FilesystemAdapter is used when cache is enabled to ensure persistance, otherwise ArrayAdapter.
-    if ($_ENV["CACHE_ENABLED"] === 'true') {
-        return new FilesystemAdapter('fs_cache', 3600, PATH_CACHE);
-    } else {
-        return new ArrayAdapter();
-    }
-});
+// Setup Symfony Dependency Injection Container
+$container = new ContainerBuilder();
+$loader = new PhpFileLoader($container, new FileLocator(__DIR__ . '/Config'));
+$loader->load('services.php');
+$container->compile();
 
-// Now create the apps
+// Create Slim app with Symfony container
 AppFactory::setContainer($container);
 $app = AppFactory::create();
 
@@ -39,7 +33,7 @@ $twig = Twig::create(BASE_PATH . DIRECTORY_SEPARATOR . 'Templates', [
 $twig->addExtension(new \Twig\Extension\DebugExtension());
 
 // Register custom filters
-$twig->addExtension(new TwigFilters());
+$twig->addExtension($container->get(\ExtensionDirectory\TwigFilters::class));
 $twig->addExtension(new Marek\Twig\ByteUnitsExtension());
 
 $app->add(TwigMiddleware::create($app, $twig));

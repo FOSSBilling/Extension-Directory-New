@@ -9,15 +9,20 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 class Tools
 {
+    public function __construct(
+        private readonly CacheInterface $cache
+    ) {
+    }
+
     /**
      * Returns the completed license info depending on what items are missing.
      * As long as the SPDX ID is passed, this function will fetch the name of the license as well as a link to it.
      */
-    public static function completeLicenseInfo(array $license, CacheInterface $cacheService): array
+    public function completeLicenseInfo(array $license): array
     {
         $key = 'license_' . hash('xxh3', serialize($license));
 
-        return $cacheService->get($key, function (ItemInterface $item) use ($license): array {
+        return $this->cache->get($key, function (ItemInterface $item) use ($license): array {
             $item->expiresAfter(86400 * 7); // Cache this result for a full week as it should very rarely change.
 
             if (!empty($license['id']) && (empty($license['url']) || empty($license['name']))) {
@@ -41,7 +46,7 @@ class Tools
         });
     }
 
-    public static function returnAuthorInfo(string $author): array
+    public function returnAuthorInfo(string $author): array
     {
         $FQCN = '\\ExtensionDirectory\\Authors\\' . $author;
         if (!class_exists($FQCN)) {
@@ -57,7 +62,7 @@ class Tools
         ];
     }
 
-    public static function getRepoType(string $url): string
+    public function getRepoType(string $url): string
     {
         $repoHosts = [
             'github.com' => 'github',
@@ -75,7 +80,7 @@ class Tools
         return 'unknown';
     }
 
-    public static function getRepoName(string $url): string
+    public function getRepoName(string $url): string
     {
         $repoHosts = [
             'github.com' => 'https://github.com/',

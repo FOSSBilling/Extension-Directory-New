@@ -4,8 +4,8 @@ namespace ExtensionDirectory\Authors;
 
 class :id:
 {
-    const type = ':type:';
-    const name = ':name:';
-    const id   = ':id:';
-    const URL  = ':url:';
+    public const TYPE = ':type:';
+    public const NAME = ':name:';
+    public const ID   = ':id:';
+    public const URL  = ':url:';
 }

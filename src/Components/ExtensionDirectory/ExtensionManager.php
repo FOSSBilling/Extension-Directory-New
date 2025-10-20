@@ -13,12 +13,19 @@ use ElGigi\CommonMarkEmoji\EmojiExtension;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ExtensionManager
 {
-    public static function getExtensionList(
+    public function __construct(
+        private readonly CacheInterface $cache,
+        private readonly Tools $tools,
+        private readonly HttpClientInterface $httpClient
+    ) {
+    }
+
+    public function getExtensionList(
         bool $convertReadme,
-        CacheInterface $cacheService,
         array $filter = [],
         array $sort = [],
         int $page = 1,
@@ -27,23 +34,23 @@ class ExtensionManager
     {
         $finder = new Finder();
         $finder->files()->in(BASE_PATH . DIRECTORY_SEPARATOR . 'Library' . DIRECTORY_SEPARATOR . 'Extensions')->name('*.php');
-        $data = self::handlePagination($finder, $page, $itemsPerPage);
+        $data = $this->handlePagination($finder, $page, $itemsPerPage);
 
         $extensions = [];
         foreach ($data as $file) {
             $extension = $file->getBasename('.php');
-            $info = self::getExtensionInfo($extension, $convertReadme, $cacheService);
+            $info = $this->getExtensionInfo($extension, $convertReadme);
             if ($info) {
                 $extensions[] = $info;
             }
         }
 
-        self::handleSortAndFilter($extensions, $sort, $filter);
+        $this->handleSortAndFilter($extensions, $sort, $filter);
 
         return $extensions;
     }
 
-    public static function getExtensionInfo(string $id, bool $convertReadme, CacheInterface $cacheService): array
+    public function getExtensionInfo(string $id, bool $convertReadme): array
     {
         // Convert the ID to lowercase and build the fully qualified class name
         $id = strtolower($id);
@@ -61,17 +68,17 @@ class ExtensionManager
         $key = $convertReadme ? $id . 'converted' : $id . 'notConverted';
 
         // Retrieve the readme from the cache, or generate it and cache it if it doesn't exist
-        $readme = $cacheService->get($key, function (ItemInterface $item) use ($extension, $convertReadme): string {
+        $readme = $this->cache->get($key, function (ItemInterface $item) use ($extension, $convertReadme): string {
             // Set the cache expiration time to one day
             $item->expiresAfter(86400);
 
             // Attempt to retrieve the readme from the URL specified in the extension class
             $readme = 'There was an issue retrieving the module\'s readme.';
             if ($extension::README_URL) {
-                $fetchedReadme = @file_get_contents($extension::README_URL);
-                if ($fetchedReadme !== false) {
-                    $readme = $fetchedReadme;
-                } else {
+                try {
+                    $response = $this->httpClient->request('GET', $extension::README_URL);
+                    $readme = $response->getContent();
+                } catch (\Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface | \Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface $e) {
                     // Reduce cache time on error so it can self-resolve
                     $item->expiresAfter(900);
                 }
@@ -113,7 +120,7 @@ class ExtensionManager
         });
 
         // Complete the license information using the SPDX API if necessary
-        $license = Tools::completeLicenseInfo($extension::LICENSE, $cacheService);
+        $license = $this->tools->completeLicenseInfo($extension::LICENSE);
 
         // Build and return an array of extension information
         return [
@@ -124,7 +131,7 @@ class ExtensionManager
             'version'      => $releases[0]['tag'],
             'download_url' => $releases[0]['download_url'],
             'releases'     => $releases,
-            'author'       => Tools::returnAuthorInfo($extension::AUTHOR),
+            'author'       => $this->tools->returnAuthorInfo($extension::AUTHOR),
             'license'      => $license,
             'repo'         => $extension::REPO,
             'icon_url'     => $extension::ICON_URL,
@@ -133,7 +140,7 @@ class ExtensionManager
         ];
     }
 
-    private static function handlePagination(Finder $finder, int $page, int $itemsPerPage): array
+    private function handlePagination(Finder $finder, int $page, int $itemsPerPage): array
     {
         $itemsPerPage = ($itemsPerPage > 100) ? 100 : $itemsPerPage;
         $totalExtensions = $finder->count();
@@ -146,7 +153,7 @@ class ExtensionManager
         return array_slice($data, $offset, $itemsPerPage);
     }
 
-    private static function handleSortAndFilter(array &$data, array $sort, array $filter): void
+    private function handleSortAndFilter(array &$data, array $sort, array $filter): void
     {
         $sort['by'] ??= 'name';
         $sort['direction'] ??= 'desc';

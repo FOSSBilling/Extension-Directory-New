@@ -10,22 +10,26 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 class Stats
 {
-    public static function getDirSize(string $path): int
+    public function __construct(
+        private CacheInterface $cacheService
+    ) {}
+
+    public function getDirSize(string $path): int
     {
         $size = 0;
 
         $di = new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS);
         $ri = new \RecursiveIteratorIterator($di);
         foreach ($ri as $file) {
-            $size += $file->isDir() ?  self::getDirSize($file->getRealPath()) : filesize($file->getRealPath());
+            $size += $file->isDir() ?  $this->getDirSize($file->getRealPath()) : filesize($file->getRealPath());
         }
 
         return $size;
     }
 
-    public static function getStats(CacheInterface $cacheService): array
+    public function getStats(): array
     {
-        return $cacheService->get('stats', function (ItemInterface $item): array {
+        return $this->cacheService->get('stats', function (ItemInterface $item): array {
             // Retain the stats for 24 hours
             $item->expiresAfter(86400);
 
@@ -41,17 +45,17 @@ class Stats
                 ],
                 'total_extensions' => 0,
                 'total_authors' => 0,
-                'cache_size' => self::getDirSize(PATH_CACHE),
+                'cache_size' => $this->getDirSize(PATH_CACHE),
             ];
 
             // Now update the stats for extensions
-            foreach (self::getExtensions() as $extension) {
+            foreach ($this->getExtensions() as $extension) {
                 $stats['extension_types'][$extension['type']]++;
                 $stats['total_extensions']++;
             }
 
             // Last update thef stats for authors
-            foreach (self::getAuthors() as $author) {
+            foreach ($this->getAuthors() as $author) {
                 $stats['author_types'][$author['type']]++;
                 $stats['total_authors']++;
             }
@@ -61,7 +65,7 @@ class Stats
         });
     }
 
-    private static function getExtensions(): array
+    private function getExtensions(): array
     {
         $finder = new Finder();
         $finder->files()->in(BASE_PATH . DIRECTORY_SEPARATOR . 'Library' . DIRECTORY_SEPARATOR . 'Extensions')->name('*.php');
@@ -82,7 +86,7 @@ class Stats
         return $extensions;
     }
 
-    private static function getAuthors(): array
+    private function getAuthors(): array
     {
         $finder = new Finder();
         $finder->files()->in(BASE_PATH . DIRECTORY_SEPARATOR . 'Library' . DIRECTORY_SEPARATOR . 'Authors')->name('*.php');
