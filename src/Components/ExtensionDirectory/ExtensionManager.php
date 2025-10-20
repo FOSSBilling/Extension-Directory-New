@@ -31,7 +31,7 @@ class ExtensionManager
 
         $extensions = [];
         foreach ($data as $file) {
-            $extension = basename($file, '.php');
+            $extension = $file->getBasename('.php');
             $info = self::getExtensionInfo($extension, $convertReadme, $cacheService);
             if ($info) {
                 $extensions[] = $info;
