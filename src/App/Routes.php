@@ -16,13 +16,17 @@ return function (App $app) {
 
         $extensionList = ExtensionDirectory\ExtensionManager::getExtensionList(true, $this->get('cache'), $filter, $sort, $page, $perPage);
         if (!$extensionList) {
-            // TODO: Handle errors here
-        } else {
             return ResponseHelper::renderTwigTemplate($response, $request, 'index.html.twig', [
-                'extensions' => $extensionList,
+                'extensions' => [],
                 'get' => $GET,
+                'error' => 'Unable to load extensions. Please try again later.',
             ], $this->get('cache'));
         }
+
+        return ResponseHelper::renderTwigTemplate($response, $request, 'index.html.twig', [
+            'extensions' => $extensionList,
+            'get' => $GET,
+        ], $this->get('cache'));
     })->setName('index');
 
     $app->get('/about', function (Request $request, Response $response, $args) {
@@ -32,12 +36,18 @@ return function (App $app) {
     $app->get('/extension/{id}', function (Request $request, Response $response, $args) {
         $extensionInfo = ExtensionDirectory\ExtensionManager::getExtensionInfo($args['id'], true, $this->get('cache'));
         if (!$extensionInfo) {
-            // TODO: Handle errors here
-        } else {
-            return ResponseHelper::renderTwigTemplate($response, $request, 'extensionInfo.html.twig', [
-                'extension' => $extensionInfo
+            // Extension not found - return 404
+            $response = $response->withStatus(404);
+            return ResponseHelper::renderTwigTemplate($response, $request, 'index.html.twig', [
+                'extensions' => [],
+                'get' => [],
+                'error' => 'Extension "' . htmlspecialchars($args['id']) . '" not found.',
             ], $this->get('cache'));
         }
+
+        return ResponseHelper::renderTwigTemplate($response, $request, 'extensionInfo.html.twig', [
+            'extension' => $extensionInfo
+        ], $this->get('cache'));
     })->setName('extension');
 
     $app->group('/api', function ($group) {
@@ -58,19 +68,19 @@ return function (App $app) {
             $extensionList = ExtensionDirectory\ExtensionManager::getExtensionList(false, $this->get('cache'), $filter);
 
             if (!$extensionList) {
-                // TODO: Handle errors here
-            } else {
-                return ResponseHelper::renderJson(false, $extensionList, $response);
+                return ResponseHelper::renderJson(true, 'Unable to load extensions', $response, 500);
             }
+
+            return ResponseHelper::renderJson(false, $extensionList, $response);
         });
 
         $group->get('/extension/{id}', function (Request $request, Response $response, $args) {
             $extensionInfo = ExtensionDirectory\ExtensionManager::getExtensionInfo($args['id'], false, $this->get('cache'));
             if (!$extensionInfo) {
-                // TODO: Handle errors here
-            } else {
-                return ResponseHelper::renderJson(false, $extensionInfo, $response);
+                return ResponseHelper::renderJson(true, 'Extension not found', $response, 404);
             }
+
+            return ResponseHelper::renderJson(false, $extensionInfo, $response);
         });
 
         $group->get('/extension/{id}/badges/{type}', function (Request $request, Response $response, $args) {

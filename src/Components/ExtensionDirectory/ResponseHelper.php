@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ExtensionDirectory;
 
 use Slim\Views\Twig;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class ResponseHelper
 {
-    public static function renderTwigTemplate(Response $response, Request $request, string $template, array $data = [], ?object $cacheService = null): Response
+    public static function renderTwigTemplate(Response $response, Request $request, string $template, array $data = [], ?CacheInterface $cacheService = null): Response
     {
         $view = Twig::fromRequest($request);
         if (is_object($cacheService)) {

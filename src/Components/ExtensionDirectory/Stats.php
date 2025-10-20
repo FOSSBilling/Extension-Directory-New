@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ExtensionDirectory;
 
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class Stats
 {
@@ -16,11 +19,11 @@ class Stats
         foreach ($ri as $file) {
             $size += $file->isDir() ?  self::getDirSize($file->getRealPath()) : filesize($file->getRealPath());
         }
-    
+
         return $size;
     }
 
-    public static function getStats(object $cacheService)
+    public static function getStats(CacheInterface $cacheService): array
     {
         return $cacheService->get('stats', function (ItemInterface $item): array {
             // Retain the stats for 24 hours
@@ -92,7 +95,7 @@ class Stats
             if (class_exists($FQCN)) {
                 $author = new $FQCN;
                 $authors[] = [
-                    'type' => $author::type,
+                    'type' => $author::TYPE,
                 ];
             }
         }

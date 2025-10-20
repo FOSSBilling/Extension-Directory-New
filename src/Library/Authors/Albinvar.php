@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ExtensionDirectory\Authors;
 
 class Albinvar
 {
-    const type = 'individual';
-    const name = 'Albinvar';
-    const id   = 'albinvar';
-    const url  = 'https://github.com/albinvar';
+    public const TYPE = 'individual';
+    public const NAME = 'Albinvar';
+    public const ID = 'albinvar';
+    public const URL = 'https://github.com/albinvar';
 }

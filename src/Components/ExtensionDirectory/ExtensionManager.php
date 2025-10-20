@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ExtensionDirectory;
 
 use League\CommonMark\Extension\CommonMark\Node\Inline\Image;
@@ -10,10 +12,18 @@ use League\CommonMark\GithubFlavoredMarkdownConverter;
 use ElGigi\CommonMarkEmoji\EmojiExtension;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class ExtensionManager
 {
-    public static function getExtensionList(bool $convertReadme, object $cacheService, array $filter = [], array $sort = [], int $page = 1, int $itemsPerPage = 100): array
+    public static function getExtensionList(
+        bool $convertReadme,
+        CacheInterface $cacheService,
+        array $filter = [],
+        array $sort = [],
+        int $page = 1,
+        int $itemsPerPage = 100
+    ): array
     {
         $finder = new Finder();
         $finder->files()->in(BASE_PATH . DIRECTORY_SEPARATOR . 'Library' . DIRECTORY_SEPARATOR . 'Extensions')->name('*.php');
@@ -33,7 +43,7 @@ class ExtensionManager
         return $extensions;
     }
 
-    public static function getExtensionInfo(string $id, bool $convertReadme, object $cacheService): array
+    public static function getExtensionInfo(string $id, bool $convertReadme, CacheInterface $cacheService): array
     {
         // Convert the ID to lowercase and build the fully qualified class name
         $id = strtolower($id);
@@ -58,7 +68,13 @@ class ExtensionManager
             // Attempt to retrieve the readme from the URL specified in the extension class
             $readme = 'There was an issue retrieving the module\'s readme.';
             if ($extension::readmeUrl) {
-                $readme = file_get_contents($extension::readmeUrl);
+                $fetchedReadme = @file_get_contents($extension::readmeUrl);
+                if ($fetchedReadme !== false) {
+                    $readme = $fetchedReadme;
+                } else {
+                    // Reduce cache time on error so it can self-resolve
+                    $item->expiresAfter(900);
+                }
             }
 
             // If desired, convert the readme to HTML
@@ -84,10 +100,10 @@ class ExtensionManager
                     'allow_unsafe_links' => false,
                 ]);
 
-                return $converter->convert($readme);
-            } else {
-                return $readme;
+                return (string) $converter->convert($readme);
             }
+
+            return $readme;
         });
 
         // Sort the releases by version number in descending order
@@ -117,7 +133,7 @@ class ExtensionManager
         ];
     }
 
-    private static function handlePagination(Finder $finder, int $page, int $itemsPerPage)
+    private static function handlePagination(Finder $finder, int $page, int $itemsPerPage): array
     {
         $itemsPerPage = ($itemsPerPage > 100) ? 100 : $itemsPerPage;
         $totalExtensions = $finder->count();
@@ -130,7 +146,7 @@ class ExtensionManager
         return array_slice($data, $offset, $itemsPerPage);
     }
 
-    private static function handleSortAndFilter(array &$data, array $sort, array $filter)
+    private static function handleSortAndFilter(array &$data, array $sort, array $filter): void
     {
         $sort['by'] ??= 'name';
         $sort['direction'] ??= 'desc';

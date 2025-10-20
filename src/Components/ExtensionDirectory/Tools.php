@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ExtensionDirectory;
 
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class Tools
 {
@@ -10,7 +13,7 @@ class Tools
      * Returns the completed license info depending on what items are missing.
      * As long as the SPDX ID is passed, this function will fetch the name of the license as well as a link to it.
      */
-    public static function completeLicenseInfo(array $license, object $cacheService): array
+    public static function completeLicenseInfo(array $license, CacheInterface $cacheService): array
     {
         $key = 'license_' . hash('xxh3', serialize($license));
 
@@ -45,12 +48,12 @@ class Tools
             return [];
         }
 
-        $authorClass = new $FQCN;
+        $authorClass = new $FQCN();
         return [
-            'type' => $authorClass::type,
-            'name' => $authorClass::name,
-            'id'   => $authorClass::id,
-            'url'  => $authorClass::url,
+            'type' => $authorClass::TYPE,
+            'name' => $authorClass::NAME,
+            'id'   => $authorClass::ID,
+            'url'  => $authorClass::URL,
         ];
     }
 
@@ -64,7 +67,7 @@ class Tools
         ];
 
         foreach ($repoHosts as $host => $type) {
-            if (strpos($url, $host) !== false) {
+            if (str_contains($url, $host)) {
                 return $type;
             }
         }
@@ -82,7 +85,7 @@ class Tools
         ];
 
         foreach ($repoHosts as $host => $prefix) {
-            if (strpos($url, $host) !== false) {
+            if (str_contains($url, $host)) {
                 $repoName = str_replace($prefix, '', $url);
                 return rtrim($repoName, '/');
             }

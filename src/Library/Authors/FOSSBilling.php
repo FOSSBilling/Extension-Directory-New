@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ExtensionDirectory\Authors;
 
 class FOSSBilling
 {
-    const type = 'organization';
-    const name = 'FOSSBilling';
-    const id   = 'fossbilling';
-    const url  = 'https://fossbilling.org';
+    public const TYPE = 'organization';
+    public const NAME = 'FOSSBilling';
+    public const ID = 'fossbilling';
+    public const URL = 'https://fossbilling.org';
 }

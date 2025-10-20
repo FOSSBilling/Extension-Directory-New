@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ExtensionDirectory\Authors;
 
 class Bitcart
 {
-    const type = 'organization';
-    const name = 'Bitcart';
-    const id   = 'bitcart';
-    const url  = 'https://bitcart.ai/';
+    public const TYPE = 'organization';
+    public const NAME = 'Bitcart';
+    public const ID = 'bitcart';
+    public const URL = 'https://bitcart.ai/';
 }
