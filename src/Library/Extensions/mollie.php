@@ -4,20 +4,20 @@ namespace ExtensionDirectory\Extensions;
 
 class mollie
 {
-    const name = 'Mollie';
-    const type = 'payment-gateway';
-    const description = 'Mollie extension for FOSSBilling';
-    const license = [
+    public const NAME = 'Mollie';
+    public const TYPE = 'payment-gateway';
+    public const DESCRIPTION = 'Mollie extension for FOSSBilling';
+    public const LICENSE = [
         'id' => 'apache-2.0'
     ];
-    const readmeUrl = 'https://raw.githubusercontent.com/FOSSBilling/Mollie/main/README.md';
-    const repo = 'https://github.com/FOSSBilling/mollie';
-    const website = 'https://fossbilling.org';
-    const icon_url = 'https://raw.githubusercontent.com/FOSSBilling/Mollie/main/src/Mollie.png';
+    public const README_URL = 'https://raw.githubusercontent.com/FOSSBilling/Mollie/main/README.md';
+    public const REPO = 'https://github.com/FOSSBilling/mollie';
+    public const WEBSITE = 'https://fossbilling.org';
+    public const ICON_URL = 'https://raw.githubusercontent.com/FOSSBilling/Mollie/main/src/Mollie.png';
 
-    const author = 'FOSSBilling';
+    public const AUTHOR = 'FOSSBilling';
 
-    const releases = [
+    public const RELEASES = [
         [
             "tag" => "0.0.3",
             "date" => "2023-06-13T14:17:49Z",

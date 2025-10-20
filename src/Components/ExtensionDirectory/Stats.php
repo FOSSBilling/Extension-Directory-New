@@ -74,7 +74,7 @@ class Stats
             if (class_exists($FQCN)) {
                 $extension = new $FQCN;
                 $extensions[] = [
-                    'type' => $extension::type,
+                    'type' => $extension::TYPE,
                 ];
             }
         }

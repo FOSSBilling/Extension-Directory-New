@@ -4,21 +4,21 @@ namespace ExtensionDirectory\Extensions;
 
 class bitcart
 {
-    const name = 'Bitcart';
-    const type = 'payment-gateway';
-    const description = 'Bitcart extension for FOSSBilling';
-    const license = [
+    public const NAME = 'Bitcart';
+    public const TYPE = 'payment-gateway';
+    public const DESCRIPTION = 'Bitcart extension for FOSSBilling';
+    public const LICENSE = [
         'id'  => 'MIT',
         'url' => 'https://github.com/bitcart/bitcart-fossbilling/blob/master/LICENSE'
     ];
-    const readmeUrl = 'https://raw.githubusercontent.com/bitcart/bitcart-fossbilling/master/README.md';
-    const repo = 'https://github.com/bitcart/bitcart-fossbilling';
-    const website = 'https://bitcart.ai/';
-    const icon_url = 'https://raw.githubusercontent.com/bitcart/bitcart-fossbilling/master/Bitcart/Bitcart.png';
+    public const README_URL = 'https://raw.githubusercontent.com/bitcart/bitcart-fossbilling/master/README.md';
+    public const REPO = 'https://github.com/bitcart/bitcart-fossbilling';
+    public const WEBSITE = 'https://bitcart.ai/';
+    public const ICON_URL = 'https://raw.githubusercontent.com/bitcart/bitcart-fossbilling/master/Bitcart/Bitcart.png';
 
-    const author = 'Bitcart';
+    public const AUTHOR = 'Bitcart';
 
-    const releases = [
+    public const RELEASES = [
         [
             'tag' => '1.1.0',
             'date' => '2023-06-15T19:22:52Z',

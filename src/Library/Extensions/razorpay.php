@@ -4,21 +4,21 @@ namespace ExtensionDirectory\Extensions;
 
 class razorpay
 {
-    const name = 'Razorpay';
-    const type = 'payment-gateway';
-    const description = 'Razorpay extension for FOSSBilling';
-    const license = [
+    public const NAME = 'Razorpay';
+    public const TYPE = 'payment-gateway';
+    public const DESCRIPTION = 'Razorpay extension for FOSSBilling';
+    public const LICENSE = [
         'id'  => 'apache-2.0',
         'url' => 'https://github.com/albinvar/Razorpay-FOSSBilling/blob/1.x-prod/LICENSE'
     ];
-    const readmeUrl = 'https://raw.githubusercontent.com/albinvar/Razorpay-FOSSBilling/1.x-prod/README.md';
-    const repo = 'https://github.com/albinvar/Razorpay-FOSSBilling';
-    const website = 'https://razorpay.com';
-    const icon_url = 'https://raw.githubusercontent.com/albinvar/assets/main/fossbilling/razorpay-glyph-cropped.svg';
+    public const README_URL = 'https://raw.githubusercontent.com/albinvar/Razorpay-FOSSBilling/1.x-prod/README.md';
+    public const REPO = 'https://github.com/albinvar/Razorpay-FOSSBilling';
+    public const WEBSITE = 'https://razorpay.com';
+    public const ICON_URL = 'https://raw.githubusercontent.com/albinvar/assets/main/fossbilling/razorpay-glyph-cropped.svg';
 
-    const author = 'Albinvar';
+    public const AUTHOR = 'Albinvar';
 
-    const releases = [
+    public const RELEASES = [
         [
             'tag' => '0.1.0',
             'date' => '2023-09-24T21:03:30Z',

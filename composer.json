@@ -1,6 +1,6 @@
 {
     "name": "fossbilling/extension-directory",
-    "description": "The FOSSBilling extension directory, rewritten to use PHP and to not be a static stite",
+    "description": "The FOSSBilling extension directory, rewritten to use PHP and to not be a static site",
     "type": "project",
     "license": "Apache-2.0",
     "authors": [

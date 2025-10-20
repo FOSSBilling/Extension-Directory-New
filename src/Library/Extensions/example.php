@@ -4,20 +4,20 @@ namespace ExtensionDirectory\Extensions;
 
 class example
 {
-    const name = 'Example';
-    const type = 'mod';
-    const description = 'An example module for developers to get started.';
-    const license = [
+    public const NAME = 'Example';
+    public const TYPE = 'mod';
+    public const DESCRIPTION = 'An example module for developers to get started.';
+    public const LICENSE = [
         'id' => 'apache-2.0'
     ];
-    const readmeUrl = 'https://raw.githubusercontent.com/FOSSBilling/example-module/main/README.md';
-    const repo = 'https://github.com/FOSSBilling/example-module';
-    const website = 'https://fossbilling.org';
-    const icon_url = 'https://raw.githubusercontent.com/FOSSBilling/example-module/main/src/icon.svg';
+    public const README_URL = 'https://raw.githubusercontent.com/FOSSBilling/example-module/main/README.md';
+    public const REPO = 'https://github.com/FOSSBilling/example-module';
+    public const WEBSITE = 'https://fossbilling.org';
+    public const ICON_URL = 'https://raw.githubusercontent.com/FOSSBilling/example-module/main/src/icon.svg';
 
-    const author = 'FOSSBilling';
+    public const AUTHOR = 'FOSSBilling';
 
-    const releases = [
+    public const RELEASES = [
         [
             'tag' => '0.0.5',
             'date' => '2024-02-12T06:36:38+00:00',

@@ -67,8 +67,8 @@ class ExtensionManager
 
             // Attempt to retrieve the readme from the URL specified in the extension class
             $readme = 'There was an issue retrieving the module\'s readme.';
-            if ($extension::readmeUrl) {
-                $fetchedReadme = @file_get_contents($extension::readmeUrl);
+            if ($extension::README_URL) {
+                $fetchedReadme = @file_get_contents($extension::README_URL);
                 if ($fetchedReadme !== false) {
                     $readme = $fetchedReadme;
                 } else {
@@ -107,28 +107,28 @@ class ExtensionManager
         });
 
         // Sort the releases by version number in descending order
-        $releases = $extension::releases;
+        $releases = $extension::RELEASES;
         usort($releases, function ($a, $b) {
             return version_compare($b['tag'], $a['tag']);
         });
 
         // Complete the license information using the SPDX API if necessary
-        $license = Tools::completeLicenseInfo($extension::license, $cacheService);
+        $license = Tools::completeLicenseInfo($extension::LICENSE, $cacheService);
 
         // Build and return an array of extension information
         return [
             'id'           => $id,
-            'type'         => $extension::type,
-            'name'         => $extension::name,
-            'description'  => $extension::description,
+            'type'         => $extension::TYPE,
+            'name'         => $extension::NAME,
+            'description'  => $extension::DESCRIPTION,
             'version'      => $releases[0]['tag'],
             'download_url' => $releases[0]['download_url'],
             'releases'     => $releases,
-            'author'       => Tools::returnAuthorInfo($extension::author),
+            'author'       => Tools::returnAuthorInfo($extension::AUTHOR),
             'license'      => $license,
-            'repo'         => $extension::repo,
-            'icon_url'     => $extension::icon_url,
-            'website'      => $extension::website,
+            'repo'         => $extension::REPO,
+            'icon_url'     => $extension::ICON_URL,
+            'website'      => $extension::WEBSITE,
             'readme'       => $readme,
         ];
     }
