@@ -1,11 +1,13 @@
 name: Build and Test
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: main
   pull_request:
     branches: main
-
 jobs:
   composer:
     runs-on: ubuntu-latest
