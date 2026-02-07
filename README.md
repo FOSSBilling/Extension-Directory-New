@@ -41,4 +41,4 @@ TODO, but for now you can find it under `src/Library/Authors` and update it.
 
 ## License
 Each module is licensed under the terms set by the author. Please see the `LICENSE` file in each module for more information.
-The extension directory website is licensed under the Apache 2.0 license. See the `LICENSE` file for more information.
+The extension directory website is licensed under the GNU Affero General Public License v3.0 license. See the `LICENSE` file for more information.
