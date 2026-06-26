@@ -1,3 +1,6 @@
+> **Warning**:
+This repository has been archived and is no longer maintained. For information about how to get started with FOSSBilling check the official [documentation](https://docs.fossbilling.org/getting-started/).
+
 # FOSSBilling extension directory
 
 This is a new version of the Extension Directory that is running on PHP. Things are likely to change, it's mostly just a POC.
